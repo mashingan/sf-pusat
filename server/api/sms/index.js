@@ -8,6 +8,10 @@ router.post('/greet', controller.newGreeting);
 router.get('/notify', controller.notification);
 router.post('/notify', controller.newNotification);
 
+// Routes for adding arbitrary type message
+router.get('/:typemsg', controller.sendMsg);
+router.post('/:typemsg', controller.updateMsg);
+
 router.post('/create', controller.createMessage);
 router.delete('/', controller.clearAll);
 

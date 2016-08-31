@@ -84,6 +84,14 @@ module.exports.createMessage = function (req, res) {
   });
 };
 
+module.exports.sendMsg = function (req, res) {
+  toSendSMS(req, res, req.params.typemsg);
+};
+
+module.exports.updateMsg = function (req, res) {
+  toUpdateMessage(req, res, req.params.typemsg);
+};
+
 module.exports.clearAll = function (req, res) {
   SMS.remove({}, function (err) {
     if (err) return sendFailed(res, 500, 'Cannot clear the db');
