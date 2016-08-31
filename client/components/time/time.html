@@ -1,0 +1,21 @@
+<!--define style-->
+  <style>
+    .clock {
+      font-size: 24px;
+      font-weight: bold;
+      color: rgba(0, 0, 0, .5);
+    }
+    .date{
+      font-size: 18px;
+      fonr-weight:300;
+      color:rgba(0,0,0,.25)
+    }
+  </style>
+<!--end of style-->
+
+<!--view-->
+<div ng-controller="TimeCtrl as timeCtrl" layout="column" ng-init="timeCtrl.init()" class="text right">
+  <div class="clock">{{clock}}</div>
+  <div class="date">{{date}}</div>
+</div>
+<!--end of view-->

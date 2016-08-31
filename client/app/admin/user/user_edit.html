@@ -1,0 +1,126 @@
+<link rel="stylesheet" href="app/admin/admin.css">
+<div ng-controller="UserEditCtrl" ng-cloak>
+  <div ng-include="'components/sidenav/sidenav.html'"></div>
+  <md-content class="md-padding" layout-xs="column" layout="row">
+    <div flex-xs flex-gt-xs="30" layout="column">
+      <md-button style="height:50px" class="md-raised md-warn" ng-click="redirect_back();">Back</md-button>
+      <md-card>
+
+        <md-card-title>
+          <md-card-title-text>
+            <span class="md-headline">Last Activity</span>
+          </md-card-title-text>
+        </md-card-title>
+
+        <md-card-content>
+          <md-list>
+            <md-list-item ng-repeat="activity in activities" class="md-3-line">
+              <img alt="{{ activity.user }}" ng-src="media/user/{{ activity.avatar }}" class="face" />
+                <div class="md-list-item-text">
+                  <h3>{{ activity.user }}</h3>
+                  <p>Do {{ activity.action }} on {{ activity.modul }} Modul at {{ activity.timestamp }}</p>
+                </div>
+              <md-divider md-inset ng-if="!$last"></md-divider>
+            </md-list-item>
+          </md-list>
+        </md-card-content>
+
+      </md-card>
+    </div>
+    <div flex-xs flex-gt-xs="70" layout="column">
+      <md-card>
+        <md-card-title class="red-card-title">
+          <md-card-title-text>
+            <span class="md-headline">Edit User</span>
+          </md-card-title-text>
+        </md-card-title>
+        <md-card-content>
+
+          <form name="userForm" ng-submit="update_user(form)">
+
+            <md-input-container class="md-block">
+              <label>NIK</label>
+              <input required name="nik"  value="{{ user.nik }}" ng-model="user.nik">
+              <div ng-messages="userForm.nik.$error">
+                <div ng-message="required">This is required.</div>
+              </div>
+            </md-input-container>
+            <md-input-container class="md-block">
+              <label>Name</label>
+              <input required name="name"  value="{{ user.name }}" ng-model="user.name">
+              <div ng-messages="userForm.name.$error">
+                <div ng-message="required">This is required.</div>
+              </div>
+            </md-input-container>
+            <md-input-container class="md-block">
+              <label>Email</label>
+              <input name="email"  value="{{ user.email }}" ng-model="user.email">
+            </md-input-container>
+            <md-input-container class="md-block" flex-gt-sm>
+              <label>Role</label>
+              <md-select name="role" ng-model="user.role" ng-change="roleItem(user.role)">
+                <md-option ng-repeat="role in roles">
+                  {{role.name}}
+                </md-option>
+              </md-select>
+            </md-input-container>
+            <md-input-container class="md-block" flex-gt-sm ng-repeat="ri in role_items">
+              <label>{{ ri.name }}</label>
+              <div ng-if="ri.name == 'Gallery'">
+                <md-select name="gallery" ng-model="user.role_item['gallery']" ng-change="getCounter(user.role_item['gallery'])">
+                  <md-option ng-repeat="gallery in galleries">
+                    {{ gallery.name }}
+                  </md-option>
+                </md-select>
+              </div>
+              <div ng-if="ri.name == 'Counter'">
+                <md-select name="counter" ng-model="user.role_item['counter']">
+                  <md-option ng-repeat="counter in counters">
+                    {{ counter }}
+                  </md-option>
+                </md-select>
+              </div>
+            </md-input-container>
+            <md-input-container class="md-block">
+              <label>Password</label>
+              <input type="password" required name="password" ng-model="user.password">
+              <div ng-messages="userForm.password.$error">
+                <div ng-message="required">This is required.</div>
+              </div>
+            </md-input-container>
+            <md-input-container class="md-block md-input-has-value" flex-gt-sm>
+              <label>Photos</label>
+              <div ng-if="user.picture != null">
+                <div layout="column" class="lf-ng-md-file-input ng-pristine ng-untouched ng-valid ng-isolate-scope layout-column ng-not-empty" aria-disabled="false" aria-invalid="false">
+                  <div layout="column" class="lf-ng-md-file-input-preview-container layout-column" aria-hidden="false">
+                    <div class="lf-ng-md-file-input-drag">
+                      <div class="lf-ng-md-file-input-thumbnails">
+                        <div class="lf-ng-md-file-input-frame ng-scope">
+                          <div class="lf-ng-md-file-input-x"  role="button" ng-click="removeImage()">×</div>
+                          <img src="{{ picture_path }}">
+                          <div class="lf-ng-md-file-input-frame-footer">
+                            <div class="lf-ng-md-file-input-frame-caption"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </md-input-container>
+            <md-input-container class="md-block" style="padding-left: 0px;">
+              <lf-ng-md-file-input lf-files="files" lf-option="optoin08" lf-placeholder="Pick Image" lf-browse-label="Search" lf-remove-label="Delete" multiple drag preview ng-disabled="disabled06"></lf-ng-md-file-input>
+            </md-input-container>
+            <div layout="row" layout-align="end">
+              <md-button class="md-raised md-warn" type="submit">Save</md-button>
+              <md-button class="md-raised" ng-click="redirect_back();">Cancel</md-button>
+            </div>
+          </form>
+
+        </md-card-content>
+      </md-card>
+    </div>
+
+  </md-content>
+</div>
+<div ng-include="'components/footer/footer.html'"></div>

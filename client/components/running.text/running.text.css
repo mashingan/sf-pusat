@@ -1,0 +1,15 @@
+.running-text {
+  position: relative;
+  width: 100%;
+  background: black;
+  color: white;
+  height: 24px;
+}
+
+.running-text-separator{
+  width:4px;
+  height:4px;
+  border-radius:4px;
+  background: white;
+  margin-top:8px;
+}

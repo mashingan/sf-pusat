@@ -1,0 +1,69 @@
+<md-dialog aria-label="Mango (Fruit)">
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2 style="color:black">Transfer Dialog</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <md-icon>clear</md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content style="max-width:800px;max-height:810px; ">
+      <md-tabs md-dynamic-height md-border-bottom>
+        <md-tab label="transfer">
+          <md-content class="md-padding">
+            <h4>Transfer Current Customer</h4>
+            <p>
+              <ul>
+
+               <li>Name : {{ ctrl.parent.current_customer.customer }}</li>
+               <li>Queueing Number : {{ ctrl.parent.current_customer.queueing_number }}</li>
+
+             </ul>
+             <md-input-container class="md-block" flex-gt-sm>
+              <label>Online Counters</label>
+              <md-select ng-model="ctrl.parent.transfer_counter">
+                <md-option ng-repeat="oc in ctrl.parent.online_counters">
+                  {{oc}}
+                </md-option>
+              </md-select>
+             </md-input-container>
+             <md-input-container class="md-block" flex-gt-sm>
+              <label>Note</label>
+              <input ng-model="ctrl.parent.transfer_note" name="transfer-note">
+             </md-input-container>
+             <md-input-container class="md-block" flex-gt-sm>
+               <md-button class="md-raised md-primary" ng-click="ctrl.parent.doTransferCustomer();">Transfer</md-button>
+             </md-input-container>
+            </p>
+          </md-content>
+        </md-tab>
+        <md-tab label="incoming">
+          <md-content class="md-padding">
+            <h4>Incoming Transfer Customer</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th>Queueing Number</th>
+                  <th>Customer</th>
+                  <th>From Counter</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="incoming in ctrl.parent.incoming_transfer_customer">
+                  <td>{{ incoming.queueing_number }}</td>
+                  <td>{{ incoming.customer }}</td>
+                  <td>{{ incoming.from_counter }}</td>
+                  <td><md-button class="md-raised md-primary">Proceed</md-button></td>
+                </tr>
+                
+              </tbody>
+            </table>
+          </md-content>
+        </md-tab>
+      </md-tabs>
+    </md-dialog-content>
+  </form>
+</md-dialog>

@@ -1,0 +1,24 @@
+<md-dialog style="width:400px">
+  <md-toolbar md-theme="default">
+    <div class="md-toolbar-tools" layout>
+      <span>Registration</span>
+      <span flex></span>
+      <md-button class="md-icon-button" aria-label="close" ng-click="cancel()">
+        <md-icon class="mdi mdi-close">
+      </md-button>
+    </div>
+  </md-toolbar>
+  <form name="form" ng-submit="submit()">
+    <md-dialog-content class="md-padding alt" layout="column" md-theme="dark" layout-align="center center">
+      <!--<div class="text center info" go-padding top="24px" bottom="24px">-->
+      <!--Masukan <b>MDN</b> (Nomor-->
+      <!--Smartfren) anda.-->
+      <!--</div>-->
+      <input type="number" placeholder="MDN (Nomor Smartfren Anda)"
+             class="border all dark solid full width" required ng-model="set.mdn" ng-virtual-keyboard="{kt:'Numerico'}">
+      <input placeholder="Name" class="border all dark solid full width"
+             ng-model="set.name" ng-if="newCustomer" required ng-virtual-keyboard="{kt:'Letter'}">
+      <md-button aria-label="cetak" class="md-raised md-accent" type="submit">Cetak</md-button>
+    </md-dialog-content>
+  </form>
+</md-dialog>

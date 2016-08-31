@@ -1,0 +1,38 @@
+[
+  {
+    "name":"Mangga Dua",
+    "id":0,
+    "city":"Jakarta",
+    "province":"Jakarta"
+  },
+  {
+    "name":"Smartfren BEC",
+    "id":1,
+    "city":"Bandung",
+    "province":"Jawa Barat"
+  },
+  {
+    "name":"Smartfren Bogor Pajajaran",
+    "id":2,
+    "city":"Bogor",
+    "province":"Jawa Barat"
+  },
+  {
+    "name":"Mangga Dua",
+    "id":3,
+    "city":"Jakarta",
+    "province":"Jakarta"
+  },
+  {
+    "name":"Smartfren BEC",
+    "id":4,
+    "city":"Bandung",
+    "province":"Jawa Barat"
+  },
+  {
+    "name":"Smartfren Bogor Pajajaran",
+    "id":5,
+    "city":"Bogor",
+    "province":"Jawa Barat"
+  }
+]

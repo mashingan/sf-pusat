@@ -1,0 +1,32 @@
+<div layout-fill layout="column">
+
+  <md-content flex md-theme="dark" layout layout-align="center center">
+    <div layout="column" layout-align="center center">
+      <div style="text-align: center">
+        <img src="{{logos}}" height="64px" width="auto">
+      </div>
+      <go-empty height="48px"></go-empty>
+      <h4 class="font medium">Queueing System - Admin System</h4>
+      <span>Insert your NIK and Password to continue</span>
+      <go-empty height="24px"></go-empty>
+      <form name="form" style="width:320px" class="alt" ng-submit="login(form)">
+        <md-input-container class="md-block" md-no-float>
+          <input required name="nik" ng-model="user.nik">
+          <div ng-messages="form.nik.$error">
+            <div ng-message="required">This is required.</div>
+          </div>
+        </md-input-container>
+        <md-input-container class="md-block" md-no-float>
+          <input type="password" required name="password" ng-model="user.password">
+          <div ng-messages="form.password.$error">
+            <div ng-message="required">This is required.</div>
+          </div>
+        </md-input-container>
+        <md-button class="md-raised md-accent" aria-label="login" type="submit">Login</md-button>
+        <go-empty height="8px"></go-empty>
+        <md-button class="md-raised md-accent" aria-label="back" ng-click="back()">Back</md-button>
+      </form>
+    </div>
+  </md-content>
+  
+</div>

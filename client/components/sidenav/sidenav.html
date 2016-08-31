@@ -1,0 +1,65 @@
+<div ng-controller="SidenavCtrl" ng-cloak>
+<md-content>
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <md-button class="md-icon-button" aria-label="Settings" ng-click="toggleLeft()">
+        <md-icon md-svg-icon="assets/images/icons/ic_menu_24px.svg"></md-icon>
+      </md-button>
+      <h2>
+        <span><img src="assets/images/smartfren-toolbar.png" style="width:100%"/></span>
+      </h2>
+      <span flex></span>
+      <div image-fill class="face">
+        <img alt="" ng-src="media/user/{{ getCurrentUser.picture }}" />
+      </div>
+      <md-menu md-position-mode="target-right target" >
+
+        <md-button class="md-icon-button" aria-label="More" ng-click="$mdOpenMenu($event)">
+          <md-icon md-svg-icon="assets/images/icons/ic_more_vert_24px.svg"></md-icon>
+        </md-button>
+        <md-menu-content width="4" >
+          <md-menu-item>
+            <md-button>
+                <div layout="row" flex>
+                  <p flex>Setting</p>
+                  <md-icon md-menu-align-target md-svg-icon="call:portable-wifi-off" style="margin: auto 3px auto 0;"></md-icon>
+                </div>
+            </md-button>
+          </md-menu-item>
+          <md-menu-item>
+            <md-button ng-click="logout()">
+                <div layout="row" flex>
+                  <p flex>Logout</p>
+                  <md-icon md-menu-align-target md-svg-icon="call:portable-wifi-off" style="margin: auto 3px auto 0;"></md-icon>
+                </div>
+            </md-button>
+          </md-menu-item>
+        </md-menu-content>
+      </md-menu>
+    </div>
+  </md-toolbar>
+  <div ng-include="'components/breadcrumb/breadcrumb.html'"></div>
+  <div ng-if="server_online==false">
+    <div class="disconnect"><p>Warning ! Server disconnected. Try to reconnect .... </p></div>
+  </div>
+</md-content>
+<md-sidenav class="md-sidenav-left md-whiteframe-4dp red side-nav-container" md-component-id="left">
+  <md-toolbar style="background-color:#fff;padding: 20px;padding-bottom: 0px;">
+    <img src="assets/images/smartfren-landscape.png" style="width:100%"/>
+    <md-list>
+      <md-list-item class="md-3-line">
+        <div image-fill class="face">
+          <img alt="" ng-src="media/user/{{ getCurrentUser.picture }}" />
+        </div>
+          <div class="md-list-item-text">
+            <h3>{{ getCurrentUser.name }}</h3>
+            <h4>{{ getCurrentUser.role }}</h4>
+          </div>
+      </md-list-item>
+    </md-list>
+  </md-toolbar>
+  <md-content ng-controller="LeftCtrl" layout-padding style="overflow:hidden">
+    <ss-sidenav menu="menu"></ss-sidenav>
+  </md-content>
+</md-sidenav>
+</div>

@@ -1,0 +1,250 @@
+<link rel="stylesheet" href="app/admin/admin.css">
+<div ng-controller="GalleryEditCtrl" ng-cloak>
+  <div ng-include="'components/sidenav/sidenav.html'"></div>
+  <md-content class="md-padding" layout-xs="column" layout="row">
+    <div flex-xs flex-gt-xs="30" layout="column">
+      <md-button style="height:50px" class="md-raised md-warn" ng-click="redirect_back();">Back</md-button>
+      <md-card>
+
+        <md-card-title class="red-card-title">
+          <md-card-title-text>
+            <span class="md-headline">Last Activity</span>
+          </md-card-title-text>
+        </md-card-title>
+
+        <md-card-content>
+          <md-list>
+            <md-list-item ng-repeat="activity in activities" class="md-3-line">
+              <img alt="{{ activity.user }}" ng-src="media/user/{{ activity.avatar }}" class="face" />
+                <div class="md-list-item-text">
+                  <h3>{{ activity.user }}</h3>
+                  <p>Do {{ activity.action }} on {{ activity.modul }} Modul at {{ activity.timestamp }}</p>
+                </div>
+              <md-divider md-inset ng-if="!$last"></md-divider>
+            </md-list-item>
+          </md-list>
+        </md-card-content>
+
+      </md-card>
+    </div>
+    <div flex-xs flex-gt-xs="70" layout="column">
+      <md-card>
+        <md-card-title class="red-card-title">
+          <md-card-title-text>
+            <span class="md-headline">Edit Gallery</span>
+          </md-card-title-text>
+        </md-card-title>
+        <md-card-content>
+
+          <form name="galleryForm" ng-submit="update_gallery(form)">
+
+            <md-input-container class="md-block">
+              <label>Name</label>
+
+              <input required name="name"  value="{{ gallery.name }}" ng-model="gallery.name">
+              <div ng-messages="galleryForm.name.$error">
+                <div ng-message="required">This is required.</div>
+              </div>
+            </md-input-container>
+            <md-input-container md-no-float class="md-block">
+              <label>Address</label>
+               <input vs-google-autocomplete  vs-latitude="gallery.latitude" vs-longitude="gallery.longitude" ng-model="gallery.address" name="address" type="text" value="{{ gallery.address }}" placeholder="">
+            </md-input-container>
+            <md-input-container class="md-block">
+              <label>Latitude</label>
+
+              <input required name="latitude"  value="{{ gallery.latitude }}" ng-model="gallery.latitude">
+              <div ng-messages="galleryForm.latitude.$error">
+                <div ng-message="required">This is required.</div>
+              </div>
+            </md-input-container>
+            <md-input-container class="md-block">
+              <label>Longitude</label>
+
+              <input required name="longitude"  value="{{ gallery.logitude }}" ng-model="gallery.longitude">
+              <div ng-messages="galleryForm.longitude.$error">
+                <div ng-message="required">This is required.</div>
+              </div>
+            </md-input-container>
+
+            <md-input-container class="md-block">
+              <label>Type of Services</label>
+
+              <md-select ng-model="type_of_service" ng-change="setSLA(type_of_service)" data-md-container-class="selectdemoSelectHeader" multiple>
+                <md-optgroup label="typeofservices" >
+                  <md-option ng-value="typeofservice" ng-repeat="typeofservice in typeofservices">{{typeofservice}}</md-option>
+                </md-optgroup>
+              </md-select>
+
+            </md-input-container>
+            <md-input-container class="md-block md-input-has-value" ng-repeat="tos in gallery.type_of_service">
+
+              <label>{{ tos.name }} SLA</label>
+
+              <input required name="sla_{{ tos.name }}" value="{{ sla[tos.name] }}" ng-model="sla[tos.name]">
+
+            </md-input-container>
+
+            <md-input-container class="md-block" flex-gt-sm>
+              <label>Province</label>
+              <md-select name="province" ng-model="gallery.province" ng-change="get_city(gallery.province)">
+                <md-option ng-repeat="province in provinces" value="{{province.name}}">
+                  {{province.name}}
+                </md-option>
+              </md-select>
+            </md-input-container>
+            <md-input-container class="md-block" flex-gt-sm>
+              <label>City</label>
+              <md-select name="city" ng-model="gallery.city">
+                <md-option ng-repeat="city in cities" value="{{city.name}}">
+                  {{city.name}}
+                </md-option>
+              </md-select>
+            </md-input-container>
+             <md-input-container class="md-block">
+              <label>Number of Counter</label>
+
+              <input required type="number" name="counter_count"  value="{{ gallery.counter_count }}" ng-model="gallery.counter_count">
+              <div ng-messages="galleryForm.counter_count.$error">
+                <div ng-message="required">This is required.</div>
+              </div>
+            </md-input-container>
+            <md-input-container class="md-block">
+              <label>Running Text</label>
+
+              <input required name="running_text"  value="{{ gallery.running_text.join(',') }}" ng-model="gallery.running_text">
+              <div ng-messages="galleryForm.running_text.$error">
+                <div ng-message="required">This is required.</div>
+              </div>
+            </md-input-container>
+            <md-input-container class="md-block md-input-has-value">
+              <label>Promo Text</label>
+            </md-input-container>
+            <md-input-container class="md-block" flex-gt-sm>
+              <text-angular ng-model="gallery.promo"></text-angular>
+            </md-input-container>
+            <md-input-container class="md-block md-input-has-value" flex-gt-sm>
+              <label>Work On</label>
+            </md-input-container>
+            <md-input-container class="md-block" flex-gt-sm>
+              <div layout-gt-sm="row" ng-repeat-start="wo in gallery.open_days" ng-if="$first">
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label>Day(s)</label>
+                  <input name="work_{{ $index }}" style="color: black;" value="{{ day[$index] }}" ng-model="day[$index]">
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label>Open Time</label>
+                  <input name="optime_{{ $index }}" 
+                         style="color: black;" 
+                         ng-model="start_work[$index]" 
+                         mdc-datetime-picker="" 
+                         date="false" 
+                         time="true" 
+                         type="text" id="start_work[$index]" 
+                         short-time="false"
+                         placeholder="Time"
+                         min-date="minDate"
+                         format="HH:mm">
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label>Close Time</label>
+                  <input name="cltime_{{ $index }}" 
+                         style="color: black;" 
+                         ng-model="end_work[$index]" 
+                         mdc-datetime-picker="" 
+                         date="false" 
+                         time="true" 
+                         type="text" id="end_work[$index]" 
+                         short-time="false"
+                         placeholder="Time"
+                         min-date="minDate"
+                         format="HH:mm">
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-sm>
+
+                </md-input-container>
+              </div>
+               <div layout-gt-sm="row" ng-repeat-end ng-if="!$first">
+                  <md-input-container class="md-block" flex-gt-sm>
+                    <label>Day(s)</label>
+                    <input name="work_{{ $index }}" style="color: black;" value="{{ day[$index] }}" ng-model="day[$index]">
+                  </md-input-container>
+                  <md-input-container class="md-block" flex-gt-sm>
+                    <label>Open Time</label>
+                    <input name="optime_{{ $index }}" 
+                           style="color: black;" 
+                           ng-model="start_work[$index]" 
+                           mdc-datetime-picker 
+                           date="false" 
+                           time="true" 
+                           type="text" id="start_work[$index]" 
+                           short-time="false"
+                           placeholder="Time"
+                           format="HH:mm">
+                  </md-input-container>
+                  <md-input-container class="md-block" flex-gt-sm>
+                    <label>Close Time</label>
+                    <input name="cltime_{{ $index }}" 
+                           style="color: black;" 
+                           ng-model="end_work[$index]" 
+                           mdc-datetime-picker 
+                           date="false" 
+                           time="true" 
+                           type="text" id="end_work[$index]" 
+                           short-time="false"
+                           placeholder="Time"
+                           format="HH:mm">
+                  </md-input-container>
+                  <md-input-container class="md-block" flex-gt-sm>
+                    <section layout="row" layout-sm="column" layout-align="center center" layout-wrap>
+                      <md-button class="md-raised md-warn" ng-click="removeDayRow($index)">Remove</md-button>
+                    </section>
+                  </md-input-container>
+               </div>
+              <section layout="row" layout-sm="column" layout-align="center center" layout-wrap>
+                <md-button class="md-raised" ng-click="addNewDay()">Add more</md-button>
+              </section>
+            </md-input-container>
+            <md-input-container class="md-block md-input-has-value" flex-gt-sm>
+              <label>Photos</label>
+              <div ng-if="gallery.picture.length > 0">
+                <div layout="column" class="lf-ng-md-file-input ng-pristine ng-untouched ng-valid ng-isolate-scope layout-column ng-not-empty" aria-disabled="false" aria-invalid="false">
+                  <div layout="column" class="lf-ng-md-file-input-preview-container layout-column" aria-hidden="false">
+                    <div class="lf-ng-md-file-input-drag">
+                      <div class="lf-ng-md-file-input-thumbnails">
+                        <div class="lf-ng-md-file-input-frame ng-scope" ng-repeat="img in gallery.picture">
+                          <div class="lf-ng-md-file-input-x"  role="button" ng-click="removeImage($index)">×</div>
+                          <img src="{{ img }}">
+                          <div class="lf-ng-md-file-input-frame-footer">
+                            <div class="lf-ng-md-file-input-frame-caption"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </md-input-container>
+            <md-input-container class="md-block" style="padding-left: 0px;">
+              <lf-ng-md-file-input lf-files="files" lf-option="optoin08" lf-placeholder="Pick Image" lf-browse-label="Search" lf-remove-label="Delete" multiple drag preview ng-disabled="disabled06"></lf-ng-md-file-input>
+            </md-input-container>
+            <md-input-container class="md-block" flex-gt-sm>
+              <div flex-xs flex="50">
+                <md-checkbox name="active" ng-model="gallery.active" aria-label="Is Active">
+                  Is Active?
+                </md-checkbox>
+              </div>
+            </md-input-container>
+            <div layout="row" layout-align="end">
+              <md-button class="md-raised md-warn" type="submit">Save</md-button>
+              <md-button class="md-raised" ng-click="redirect_back();">Cancel</md-button>
+            </div>
+          </form>
+
+        </md-card-content>
+      </md-card>
+    </div>
+
+  </md-content>
+</div>
+<div ng-include="'components/footer/footer.html'"></div>

@@ -1,0 +1,29 @@
+<md-content md-theme="dark" layout-fill layout="column" class="main-container">
+  <div flex layout layout-align="center center">
+    <div layout="column">
+      <div style="text-align: center">
+        <img src="{{logos}}" height="64px" width="auto">
+      </div>
+      <go-empty height="48px"></go-empty>
+      <md-button class="md-raised md-primary" aria-label="kiosk" ui-sref="galleries({target:'kiosk'})">Kiosk</md-button>
+      <md-button class="md-raised md-primary" aria-label="agent" ui-sref="agentLogin">Agent</md-button>
+      <md-button class="md-raised md-primary" aria-label="agent" ui-sref="galleries({target:'tvDisplay'})">TV Display</md-button>
+      <md-button class="md-raised md-primary" aria-label="agent" ui-sref="manageLogin">Management</md-button>
+      <go-empty height="16px"></go-empty>
+      <!-- footer-->
+      <div class="tv-footer app-footer" layout>
+        <div class="image-container" flex="none">
+          <div class="label">Powered By</div>
+          <img src="{{smartfren4G}}">
+        </div>
+        <div class="divider" flex="none"></div>
+        <div class="image-container" flex="none">
+          <div class="label">Member of</div>
+          <img src="{{sinarmas}}">
+        </div>
+      </div>
+      <!-- end of footer-->
+    </div>
+  </div>
+</md-content>
+

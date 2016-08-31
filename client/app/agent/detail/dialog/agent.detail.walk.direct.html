@@ -1,0 +1,23 @@
+<md-dialog style="width:320px" aria-label="transfer">
+  <md-toolbar md-theme="default">
+    <div class="md-toolbar-tools" layout>
+      <span>Walk Direct</span>
+      <span flex></span>
+      <md-button class="md-icon-button" aria-label="close" ng-click="cancel()">
+        <md-icon class="mdi mdi-close"></md-icon>
+      </md-button>
+    </div>
+  </md-toolbar>
+  <form name="form" ng-submit="submit()">
+    <md-dialog-content class="md-padding" layout="column">
+      <go-empty height="8px"></go-empty>
+      <md-input-container flex>
+        <label>MDN</label>
+        <input ng-model="set.mdn" type="number" required>
+      </md-input-container>
+    </md-dialog-content>
+    <md-dialog-actions>
+      <md-button class="md-raised md-accent" aria-label="submit" type="submit">SUBMIT</md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

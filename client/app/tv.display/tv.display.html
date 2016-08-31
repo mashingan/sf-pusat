@@ -1,0 +1,91 @@
+<!--<div flex layout ng-init="tvDisplayCtrl.back=false">-->
+<!--<div flex="65" style="background: #000" layout layout-align="center center">-->
+<!--&lt;!&ndash;<videogular vg-theme="config.theme" vg-player-ready="onPlayerReady($API)">&ndash;&gt;-->
+<!--&lt;!&ndash;<vg-media vg-src="config.sources"&ndash;&gt;-->
+<!--&lt;!&ndash;vg-auto-play="true"&ndash;&gt;-->
+<!--&lt;!&ndash;vg-loop="true"&ndash;&gt;-->
+<!--&lt;!&ndash;vg-tracks="config.tracks">&ndash;&gt;-->
+<!--&lt;!&ndash;</vg-media>&ndash;&gt;-->
+
+<!--&lt;!&ndash;<vg-buffering></vg-buffering>&ndash;&gt;-->
+<!--&lt;!&ndash;<vg-poster vg-url='controller.config.plugins.poster'></vg-poster>&ndash;&gt;-->
+<!--&lt;!&ndash;</videogular>&ndash;&gt;-->
+<!--</div>-->
+<!--<md-content flex md-theme="dark" layout="column" layout-align="center center" go-padding all="24px" style="z-index:20">-->
+<!--<div class="big button md-whiteframe-8dp full width" flex layout layout-align="start center">-->
+<!--<div class="queue number">1</div>-->
+<!--<div class="queue desk">Cashier</div>-->
+<!--</div>-->
+<!--<div class="big button md-whiteframe-8dp full width" flex layout layout-align="start center">-->
+<!--<div class="queue number">8</div>-->
+<!--<div class="queue desk">Customer Service</div>-->
+<!--</div>-->
+<!--<div class="big button md-whiteframe-8dp full width" flex layout layout-align="start center">-->
+<!--<div class="queue number">24</div>-->
+<!--<div class="queue desk">Sales</div>-->
+<!--</div>-->
+<!--</md-content>-->
+<!--</div>-->
+<!--<running-text running-text-data="runningTextData" running-text-speed="2"></running-text>-->
+
+<md-content md-theme="dark" layout="column" layout-fill class="general padding all">
+  <!-- header-->
+  <div class="tv-header" layout layout-align="start center">
+    <div flex="none" style="cursor: pointer" ui-sref="galleries">
+      <img src="{{logo}}" flex="none">
+    </div>
+    <span flex></span>
+
+    <div ui-view="time"></div>
+  </div>
+  <!-- end of header-->
+  <!-- content-->
+  <div flex class="tv-panel" layout>
+    <div flex layout="column" class="tv-panel-item">
+      <md-content class="tv-panel-item-header">Counter List</md-content>
+      <div class="tv-panel-item-card" flex ng-repeat="item in counter_list"
+           layout="column" layout-align="center start">
+        <h4 class="color primary">Counter {{item.counter}}</h4>
+        <h5>
+          <span class="font bold">{{item.queueing_number}}</span>
+          - <span class="font regular">{{item.customer}}</span></h5>
+        </h5>
+      </div>
+    </div>
+    <div flex layout="column" class="tv-panel-item">
+      <md-content class="tv-panel-item-header">Waiting List</md-content>
+      <div class="tv-panel-item-card" flex ng-repeat="item in waiting_list"
+           layout layout-align="start center" style="max-height:96px">
+        <md-content class="tv-panel-item-number">
+          <h5>{{$index+1}}</h5>
+        </md-content>
+        <h5>
+          <span class="font bold">{{item.queueing_number}}</span>
+          - <span class="font regular">{{item.customer}}</span></h5>
+      </div>
+    </div>
+  </div>
+  <!-- end of content-->
+  <!-- footer-->
+  <div class="tv-footer app-footer" layout>
+    <div class="image-container" flex="none">
+      <div class="label">Powered By</div>
+      <img src="{{smartfren4G}}">
+    </div>
+    <div class="divider" flex="none"></div>
+    <div class="image-container" flex="none">
+      <div class="label">Member of</div>
+      <img src="{{sinarmas}}">
+    </div>
+    <div flex layout layout-align="start center" class="tv-running-text-container">
+      <running-text running-text-data="running_text" running-text-speed="1.5"></running-text>
+    </div>
+  </div>
+  <!-- end of footer-->
+</md-content>
+
+<div layout="column" layout-align="center center" class="blocker" ng-if="onSocket">
+  <i class="mdi mdi-alert"></i>
+  <go-empty height="8px"></go-empty>
+  <span>Disconected</span>
+</div>

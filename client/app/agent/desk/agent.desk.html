@@ -1,0 +1,25 @@
+<md-dialog aria-label="desk" style="width:320px">
+  <md-toolbar md-theme="default">
+    <div class="md-toolbar-tools" layout>
+      <span>Choose Desk</span>
+      <span flex></span>
+      <md-button class="md-icon-button" aria-label="close" ng-click="cancel()">
+        <md-icon class="mdi mdi-close"></md-icon>
+      </md-button>
+    </div>
+  </md-toolbar>
+  <md-dialog-content>
+    <md-list class="full width">
+      <md-list-item ng-click="go({desk:'cashier'})">
+        Cashier
+      </md-list-item>
+      <md-list-item ng-click="go({desk:'cs'})">
+        Customer Service
+      </md-list-item>
+      <md-list-item ng-click="go({desk:'sales'})">
+        Sales
+      </md-list-item>
+    </md-list>
+  </md-dialog-content>
+</md-dialog>
+

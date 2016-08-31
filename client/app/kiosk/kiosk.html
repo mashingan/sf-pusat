@@ -1,0 +1,114 @@
+<md-content md-theme="dark" layout-fill layout style="overflow: hidden">
+  <div flex="none" class="kd-maskot-container">
+    <div class="circle" constraint="height" go-background-image="assets/images/bg-circle.jpg"></div>
+    <img src="{{kwik}}" class="maskot">
+  </div>
+  <div layout="column" flex>
+    <div flex layout="column" layout-align="start center">
+      <div flex="none" layout="column" layout-align="center center"
+           class="full width"
+           go-padding top="120px">
+        <div flex="none" go-padding bottom="24px">
+          <img class="logo medium" src="{{logo}}">
+        </div>
+        <h3 class="font regular">Selamat Datang di <span class="font bold">{{gallery.name}}</span></h3>
+      </div>
+
+      <div layout="column" go-padding top="48px" style="width:320px" ng-if="mainMenu">
+        <md-button class="md-raised md-primary kd-button"
+                   aria-label="nomor" ng-click="register('nomorSmartfren')">
+          Nomor Smartfren
+        </md-button>
+        <md-button class="md-raised md-primary kd-button" aria-label="nomor" ng-click="register('pelangganBaru')">
+          Pelanggan Baru
+        </md-button>
+        <md-button class="md-raised md-primary kd-button"
+                   aria-label="nomor" ng-click="register('qrcode')">
+          QR Code
+        </md-button>
+      </div>
+
+      <div layout layout-wrap go-padding top="72px" ng-if="!mainMenu" style="max-width: 600px">
+        <div flex="50" layout="column" ng-repeat="item in gallery.type_of_service">
+          <md-button class="md-raised md-primary kd-button" aria-label="nomor" ng-click="registerForm(item.name)">
+            {{item.name}}
+          </md-button>
+        </div>
+        <!--<div flex="50" layout="column">-->
+        <!--<md-button class="md-raised md-primary kd-button" aria-label="nomor" ng-click="registerForm('Sales')">-->
+        <!--Sales-->
+        <!--</md-button>-->
+        <!--</div>-->
+        <!--<div flex="50" layout="column">-->
+        <!--<md-button class="md-raised md-primary kd-button" aria-label="nomor"-->
+        <!--ng-click="registerForm('Customer Service')">-->
+        <!--Customer Service-->
+        <!--</md-button>-->
+        <!--</div>-->
+        <!--<div flex="50" layout="column">-->
+        <!--<md-button class="md-raised md-primary kd-button" aria-label="nomor" ng-click="registerForm('Migrasi LTE')">-->
+        <!--Migrasi LTE-->
+        <!--</md-button>-->
+        <!--</div>-->
+        <div flex="50"></div>
+        <div flex="50" layout="column" go-padding top="48px">
+          <md-button aria-label="back" ng-click="back()">
+            <div class="kd-arrow-left"></div>
+            <span class="text medium font bold">menu utama</span>
+          </md-button>
+        </div>
+      </div>
+    </div>
+    <!--<div flex="none" class="kd-footer app-footer dark" layout layout-align="center center">-->
+    <!--<div class="image-container" flex="none">-->
+    <!--<div class="label">Powered By</div>-->
+    <!--<img src="{{smartfren4G}}">-->
+    <!--</div>-->
+    <!--<div class="divider" flex="none"></div>-->
+    <!--<div class="image-container" flex="none">-->
+    <!--<div class="label">Member of</div>-->
+    <!--<img src="{{sinarmas}}">-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--<div class="kd-footer-circle"></div>-->
+  </div>
+</md-content>
+
+<!--<div id="queuePaper" print-section>-->
+  <!--<div class="paper" print-only>-->
+    <!--<div class="gallery">{{currentCustomer.gallery}}</div>-->
+    <!--<div class="divider"></div>-->
+    <!--<div class="label">Nomor Antrian Anda</div>-->
+    <!--<div class="number">{{currentCustomer.queueing_number}}</div>-->
+    <!--<div class="name">{{currentCustomer.customer}}</div>-->
+    <!--<div class="divider"></div>-->
+    <!--<div class="ul">-->
+      <!--<li>-->
+        <!--<div class="label">Kategori Pelayanan</div>-->
+        <!--<div class="name">{{currentCustomer.type_of_service}}</div>-->
+      <!--</li>-->
+      <!--<li>-->
+        <!--<div class="label">Estimasi Waktu Antrian</div>-->
+        <!--<div class="name">{{currentCustomer.estimated_waiting_time||'-'}}</div>-->
+      <!--</li>-->
+    <!--</div>-->
+    <!--<div class="divider"></div>-->
+    <!--<div class="promo" ng-bind-html="gallery.promo"></div>-->
+  <!--</div>-->
+<!--</div>-->
+
+<div id="queuePaper" print-section>
+  <div class="paper" print-only>
+    <div class="logo"><img src="{{logoBlack}}"></div>
+    <div class="divider"></div>
+        <div class="gallery">{{currentCustomer.gallery}}</div>
+        <div class="number">{{currentCustomer.queueing_number}}</div>
+        <div class="name">{{currentCustomer.customer}}</div>
+        <!--<div class="label">Kategori Pelayanan</div>-->
+        <div class="name">{{currentCustomer.type_of_service}}| Est. waktu antri {{currentCustomer.estimate_waiting_time||'-'}}</div>
+    <div class="divider"></div>
+    <div class="promo" ng-bind-html="gallery.promo"></div>
+  </div>
+</div>
+
+<button print-btn id="printBtn">Doesn't matter where you put me</button>

@@ -1,0 +1,34 @@
+<md-content md-theme="dark" layout-fill layout="column" style="overflow-x:hidden ">
+  <div layout layout-align="center center" flex="none"
+       class="main-header md-whiteframe-2dp">
+    <div ui-sref="main" style="cursor: pointer">
+      <img ng-src="{{logo}}" style="height:48px">
+    </div>
+    <span flex></span>
+
+    <div style="padding:8px">
+      <md-icon class="mdi mdi-magnify" style="color:white;font-size: 24px;"></md-icon>
+    </div>
+    <input placeholder="filter" ng-model="filter">
+  </div>
+  <md-content md-theme="default" flex layout="column">
+    <go-empty height="24px" flex="none"></go-empty>
+    <div layout="row" layout-wrap layout-align="center start" flex>
+      <md-card ng-repeat="item in galleries | filter:filter" flex="30" class="md-whiteframe-8dp">
+        <!-- <img src="http://localhost:9000/media/gallery/gallery.jpeg"> -->
+        <div class="image container" go-background-image={{item.picture[0]}} ng-if="item.picture[0]"></div>
+        <div class="image container" go-background-image={{defaultPicture}} ng-if="!item.picture[0]"></div>
+        <md-card-content layout="column">
+          <h6 class="font medium">{{item.name}}</h6>
+          <go-empty height="4px"></go-empty>
+          <span class="text dark small half font light">{{item.city}},{{item.province}}</span>
+          <go-empty height="16px"></go-empty>
+          <md-button class="md-raised md-accent" aria-label="select" ng-click="selectGalleries(item)"
+                     style="margin:0px">Select
+          </md-button>
+        </md-card-content>
+      </md-card>
+    </div>
+    <go-empty height="24px" flex="none"></go-empty>
+  </md-content>
+</md-content>

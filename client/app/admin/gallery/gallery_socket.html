@@ -1,0 +1,31 @@
+<link rel="stylesheet" href="app/admin/admin.css">
+<div ng-controller="GallerySocketCtrl" ng-cloak>
+  <div ng-include="'components/sidenav/sidenav.html'"></div>
+  <md-content class="md-padding" layout-xs="column" layout="row">
+
+    <div flex-xs flex-gt-xs="100" layout="column">
+      <md-card>
+
+        <md-card-content>
+
+            <p>Socket Status : <span ng-model="socket_status">{{ socket_status }}</span></p>
+
+            <p> Running Text Socket Testing </p>
+
+            <ul>
+                <li>Buka Postman collection</li>
+                <li>Edit Gallery BEC Bandung dan rubah Running Textnya</li>
+            </ul>
+
+            <div class="running_text">
+              <h3 ng-model="running_text">{{running_text}}</h3>
+            </div>
+
+
+        </md-card-content>
+
+      </md-card>
+    </div>
+  </md-content>
+</div>
+<div ng-include="'components/footer/footer.html'"></div>

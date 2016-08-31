@@ -1,0 +1,80 @@
+.ag-header{
+  height:auto;
+}
+.ag-header img{
+  height: 48px;
+}
+
+.ag-panel{
+  background: white;
+  border-radius: 4px;
+  color:rgba(0,0,0,.92);
+}
+.ag-panel.transparent{
+  color:inherit;
+  background: transparent;
+}
+.ag-panel button{
+  border-radius: 6px;
+  font-size:16px;
+}
+
+.ag-table .thead{
+  border-top: thin solid rgba(0,0,0,.1);
+  background: rgba(0,0,0,.1);
+  color:rgba(0,0,0,.5);
+  font-size:14px;
+}
+.ag-table .tbody{
+  color:rgba(0,0,0,.75);
+  font-size:14px;
+  background: rgba(0,0,0,.05);
+  border: thin solid rgba(0,0,0,.1);
+}
+.ag-table .col{
+  padding:8px;
+}
+.ag-table .col:not(:first-child){
+  border-right: thin solid rgba(0,0,0,.1);
+}
+
+.ag-table .col:not(:last-child){
+  border-left: thin solid rgba(0,0,0,.1);
+}
+
+.ag-table .row{
+
+}
+.ag-table .row:first-child{
+  border-bottom: none;
+}
+.ag-table .row:last-child{
+  border-top: none;
+}
+.ag-table .row .col{
+  border-top:none;
+  border-bottom:none;
+}
+.ag-table .row .col:first-child{
+  border-left: none;
+}
+.ag-table .row .col:last-child{
+  border-right: none;
+}
+.ag-table button{
+  padding:2px;
+  font-size: 12px;
+}
+.ag-table md-input-container, .ag-single-row md-input-container{
+  margin:0;
+}
+.ag-table md-input-container:first-child, .ag-single-row md-input-container:first-child{
+  margin-top:16px;
+}
+
+.ag-single-row{
+  padding:8px;
+  background:rgba(0,0,0,.05);
+  border:thin solid rgba(0,0,0,.1);
+  color:rgba(0,0,0,.5);
+}

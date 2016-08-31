@@ -1,0 +1,207 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <base href="/">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="assets/fonts/material/icon.css"/>
+    <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css" />
+    <!-- build:css(client) app/vendor.css -->
+      <!-- bower:css -->
+      <link rel="stylesheet" href="bower_components/angular-material/angular-material.css" />
+      <link rel="stylesheet" href="bower_components/angular-material-data-table/dist/md-data-table.css" />
+      <link rel="stylesheet" href="bower_components/angular-material-sidenav/angular-material-sidenav.css" />
+      <link rel="stylesheet" href="bower_components/ng-tags-input/ng-tags-input.min.css" />
+      <link rel="stylesheet" href="bower_components/lf-ng-md-file-input/dist/lf-ng-md-file-input.css" />
+      <link rel="stylesheet" href="bower_components/lf-ng-md-file-input/dist/lf-ng-md-file-input.min.css" />
+      <link rel="stylesheet" href="bower_components/textAngular/dist/textAngular.css" />
+      <link rel="stylesheet" href="bower_components/angular-ui-clock/dist/angular-clock.css" />
+      <link rel="stylesheet" href="bower_components/angular-material-datetimepicker/css/material-datetimepicker.min.css" />
+      <link rel="stylesheet" href="bower_components/angularPrint/angularPrint.css" />
+      <link rel="stylesheet" href="bower_components/mdi/css/materialdesignicons.css" />
+      <link rel="stylesheet" href="bower_components/angular-virtual-keyboard/release/angular-virtual-keyboard.css" />
+      <!-- endbower -->
+    <!-- endbuild -->
+    <!-- build:css({.tmp,client}) app/app.css -->
+    <link rel="stylesheet" href="app/app.css">
+    <link rel="stylesheet" href="app/app.material.css">
+      <!-- injector:css -->
+      <link rel="stylesheet" href="app/account/login/login.css">
+      <link rel="stylesheet" href="app/admin/admin.css">
+      <link rel="stylesheet" href="app/admin/city/city.css">
+      <link rel="stylesheet" href="app/admin/configuration/configuration.css">
+      <link rel="stylesheet" href="app/admin/gallery/gallery.css">
+      <link rel="stylesheet" href="app/admin/handset_type/handsettype.css">
+      <link rel="stylesheet" href="app/admin/province/province.css">
+      <link rel="stylesheet" href="app/admin/role/role.css">
+      <link rel="stylesheet" href="app/admin/rpt_agent_breaktime/rpt_agent_breaktime.css">
+      <link rel="stylesheet" href="app/admin/rpt_productivity_gallery/rpt_productivity_gallery.css">
+      <link rel="stylesheet" href="app/admin/rpt_productivity_national/rpt_productivity_national.css">
+      <link rel="stylesheet" href="app/admin/rpt_queueing_transaction/rpt_queueing_transaction.css">
+      <link rel="stylesheet" href="app/admin/rpt_type_of_service_transaction/rpt_type_of_service_transaction.css">
+      <link rel="stylesheet" href="app/admin/socket/socket.css">
+      <link rel="stylesheet" href="app/admin/tagging_transaction/tagging_transaction.css">
+      <link rel="stylesheet" href="app/admin/type_of_breaktime/city.css">
+      <link rel="stylesheet" href="app/admin/type_of_service/typeofservice.css">
+      <link rel="stylesheet" href="app/admin/user/user.css">
+      <link rel="stylesheet" href="app/agent/detail/agent.detail.css">
+      <link rel="stylesheet" href="app/agent/login/agent.login.css">
+      <link rel="stylesheet" href="app/app.css">
+      <link rel="stylesheet" href="app/app.material.css">
+      <link rel="stylesheet" href="app/kiosk/kiosk.css">
+      <link rel="stylesheet" href="app/main/main.css">
+      <link rel="stylesheet" href="app/manage/login/manage.login.css">
+      <link rel="stylesheet" href="app/tv.display/tv.display.css">
+      <link rel="stylesheet" href="components/element/element.css">
+      <link rel="stylesheet" href="components/running.text/running.text.css">
+      <!-- endinjector -->
+    <!-- endbuild -->
+  </head>
+  <body ng-app="smartfrenApp">
+
+    <!-- Add your site or application content here -->
+    <div ui-view="" layout-fill style="background-color: #eee"></div>
+    <!-- build:js({client,node_modules}) app/vendor.js -->
+      <!-- bower:js -->
+      <script src="bower_components/jquery/dist/jquery.js"></script>
+      <script src="bower_components/angular/angular.js"></script>
+      <script src="bower_components/angular-resource/angular-resource.js"></script>
+      <script src="bower_components/angular-cookies/angular-cookies.js"></script>
+      <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+      <script src="bower_components/lodash/dist/lodash.compat.js"></script>
+      <script src="bower_components/angular-socket-io/socket.js"></script>
+      <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+      <script src="bower_components/angular-animate/angular-animate.js"></script>
+      <script src="bower_components/angular-aria/angular-aria.js"></script>
+      <script src="bower_components/angular-messages/angular-messages.js"></script>
+      <script src="bower_components/angular-material/angular-material.js"></script>
+      <script src="bower_components/angular-material-data-table/dist/md-data-table.js"></script>
+      <script src="bower_components/angular-route/angular-route.js"></script>
+      <script src="bower_components/angular-touch/angular-touch.js"></script>
+      <script src="bower_components/angular-material-sidenav/angular-material-sidenav.js"></script>
+      <script src="bower_components/pjTextToSpeech/pjTextToSpeech.js"></script>
+      <script src="bower_components/moment/moment.js"></script>
+      <script src="bower_components/datatables.net/js/jquery.dataTables.js"></script>
+      <script src="bower_components/angular-smart-table/dist/smart-table.js"></script>
+      <script src="bower_components/angular-export-table/export/table-export-directive.js"></script>
+      <script src="bower_components/angular-export-table/export/table-export-option-directive.js"></script>
+      <script src="bower_components/angular-export-table/kayalshri-table-export.jquery.plugin-a891806/table-export.js"></script>
+      <script src="bower_components/angular-export-table/kayalshri-table-export.jquery.plugin-a891806/jquery.base64.js"></script>
+      <script src="bower_components/angular-export-table/kayalshri-table-export.jquery.plugin-a891806/html2canvas.js"></script>
+      <script src="bower_components/angular-export-table/kayalshri-table-export.jquery.plugin-a891806/jspdf/jspdf.js"></script>
+      <script src="bower_components/angular-export-table/kayalshri-table-export.jquery.plugin-a891806/jspdf/libs/base64.js"></script>
+      <script src="bower_components/angular-export-table/kayalshri-table-export.jquery.plugin-a891806/jspdf/libs/sprintf.js"></script>
+      <script src="bower_components/vsGoogleAutocomplete/dist/vs-google-autocomplete.js"></script>
+      <script src="bower_components/vsGoogleAutocomplete/dist/vs-autocomplete-validator.js"></script>
+      <script src="bower_components/ng-tags-input/ng-tags-input.min.js"></script>
+      <script src="bower_components/angularjs-dropdown-multiselect/src/angularjs-dropdown-multiselect.js"></script>
+      <script src="bower_components/lf-ng-md-file-input/dist/lf-ng-md-file-input.js"></script>
+      <script src="bower_components/lf-ng-md-file-input/dist/lf-ng-md-file-input.min.js"></script>
+      <script src="bower_components/rangy/rangy-core.js"></script>
+      <script src="bower_components/rangy/rangy-classapplier.js"></script>
+      <script src="bower_components/rangy/rangy-highlighter.js"></script>
+      <script src="bower_components/rangy/rangy-selectionsaverestore.js"></script>
+      <script src="bower_components/rangy/rangy-serializer.js"></script>
+      <script src="bower_components/rangy/rangy-textrange.js"></script>
+      <script src="bower_components/textAngular/dist/textAngular.js"></script>
+      <script src="bower_components/textAngular/dist/textAngular-sanitize.js"></script>
+      <script src="bower_components/textAngular/dist/textAngularSetup.js"></script>
+      <script src="bower_components/angular-ui-clock/dist/angular-clock.js"></script>
+      <script src="bower_components/image-engine-angular/src/image-engine-angular.js"></script>
+      <script src="bower_components/angular-breadcrumb/release/angular-breadcrumb.js"></script>
+      <script src="bower_components/momentjs/moment.js"></script>
+      <script src="bower_components/angular-material-datetimepicker/js/angular-material-datetimepicker.min.js"></script>
+      <script src="bower_components/angularPrint/angularPrint.js"></script>
+      <script src="bower_components/angular-virtual-keyboard/release/angular-virtual-keyboard.min.js"></script>
+      <!-- endbower -->
+      <script src="assets/js/imagesloaded.pkgd.js"></script>
+      <script src="assets/js/jquery-imagefill.js"></script>
+      <script src="assets/html5-qrcode-master/lib/jsqrcode-combined.min.js"></script>
+      <script src="assets/html5-qrcode-master/src/html5-qrcode.js"></script>
+      <script src="socket.io-client/socket.io.js"></script>
+      <script src="bower_components/highcharts-ng/dist/highcharts.src.js"></script>
+      <script src="bower_components/highcharts-ng/dist/highcharts-ng.js"></script>
+    <!-- endbuild -->
+
+
+        <!-- build:js(.tmp) app/app.js -->
+
+        <script src="app/app.js"></script>
+          <!-- injector:js -->
+          <script src="app/account/account.js"></script>
+          <script src="app/account/login/login.controller.js"></script>
+          <script src="app/account/settings/settings.controller.js"></script>
+          <script src="app/account/signup/signup.controller.js"></script>
+          <script src="app/admin/admin.controller.js"></script>
+          <script src="app/admin/admin.js"></script>
+          <script src="app/admin/city/city.controller.js"></script>
+          <script src="app/admin/configuration/configuration.controller.js"></script>
+          <script src="app/admin/gallery/gallery.controller.js"></script>
+          <script src="app/admin/handset_type/handsettype.controller.js"></script>
+          <script src="app/admin/province/province.controller.js"></script>
+          <script src="app/admin/role/role.controller.js"></script>
+          <script src="app/admin/rpt_agent_breaktime/rpt_agent_breaktime.controller.js"></script>
+          <script src="app/admin/rpt_gallery_transaction/rpt_gallery_transaction.controller.js"></script>
+          <script src="app/admin/rpt_productivity_gallery/rpt_productivity_gallery.controller.js"></script>
+          <script src="app/admin/rpt_productivity_national/rpt_productivity_national.controller.js"></script>
+          <script src="app/admin/rpt_queueing_transaction/rpt_queueing_transaction.controller.js"></script>
+          <script src="app/admin/rpt_type_of_service_transaction/rpt_type_of_service_transaction.controller.js"></script>
+          <script src="app/admin/skillset/skillset.controller.js"></script>
+          <script src="app/admin/socket/socket.controller.js"></script>
+          <script src="app/admin/tagging_transaction/tagging_transaction.controller.js"></script>
+          <script src="app/admin/type_of_breaktime/type_of_breaktime.controller.js"></script>
+          <script src="app/admin/type_of_service/typeofservice.controller.js"></script>
+          <script src="app/admin/user/user.controller.js"></script>
+          <script src="app/agent/desk/agent.desk.controller.js"></script>
+          <script src="app/agent/detail/agent.detail.controller.js"></script>
+          <script src="app/agent/detail/agent.detail.js"></script>
+          <script src="app/agent/detail/agent.detail.service.js"></script>
+          <script src="app/agent/detail/dialog/agent.detail.break.time.controller.js"></script>
+          <script src="app/agent/detail/dialog/agent.detail.customer.controller.js"></script>
+          <script src="app/agent/detail/dialog/agent.detail.incoming.transfer.controller.js"></script>
+          <script src="app/agent/detail/dialog/agent.detail.transfer.controller.js"></script>
+          <script src="app/agent/detail/dialog/agent.detail.walk.direct.controller.js"></script>
+          <script src="app/agent/login/agent.login.controller.js"></script>
+          <script src="app/agent/login/agent.login.js"></script>
+          <script src="app/agent/login/agent.login.service.js"></script>
+          <script src="app/galleries/galleries.controller.js"></script>
+          <script src="app/galleries/galleries.js"></script>
+          <script src="app/galleries/galleries.service.js"></script>
+          <script src="app/kiosk/dialog/kiosk.qrcode.controller.js"></script>
+          <script src="app/kiosk/dialog/kiosk.register.controller.js"></script>
+          <script src="app/kiosk/kiosk.controller.js"></script>
+          <script src="app/kiosk/kiosk.js"></script>
+          <script src="app/kiosk/kiosk.service.js"></script>
+          <script src="app/main/main.controller.js"></script>
+          <script src="app/main/main.js"></script>
+          <script src="app/main/main.service.js"></script>
+          <script src="app/manage/login/manage.login.controller.js"></script>
+          <script src="app/manage/login/manage.login.js"></script>
+          <script src="app/manage/login/manage.login.service.js"></script>
+          <script src="app/tv.display/tv.display.controller.js"></script>
+          <script src="app/tv.display/tv.display.js"></script>
+          <script src="app/tv.display/tv.display.service.js"></script>
+          <script src="components/auth/auth.service.js"></script>
+          <script src="components/auth/user.service.js"></script>
+          <script src="components/breadcrumb/breadcrumb.controller.js"></script>
+          <script src="components/dialog/dialog.service.js"></script>
+          <script src="components/digitalbs/digitalbs.factory.js"></script>
+          <script src="components/digitalbs/digitalbs.js"></script>
+          <script src="components/element/customer.directive.js"></script>
+          <script src="components/element/element.directive.js"></script>
+          <script src="components/global/global.js"></script>
+          <script src="components/http/http.service.js"></script>
+          <script src="components/mongoose-error/mongoose-error.directive.js"></script>
+          <script src="components/navbar/navbar.controller.js"></script>
+          <script src="components/running.text/running.text.directive.js"></script>
+          <script src="components/sidenav/sidenav.controller.js"></script>
+          <script src="components/socket/socket.service.js"></script>
+          <script src="components/time/time.controller.js"></script>
+          <script src="components/utils/utils.service.js"></script>
+          <!-- endinjector -->
+        <!-- endbuild -->
+</body>
+</html>

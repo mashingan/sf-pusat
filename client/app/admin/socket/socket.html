@@ -1,0 +1,187 @@
+<link rel="stylesheet" href="app/admin/admin.css">
+<div ng-controller="SocketCtrl" ng-cloak>
+  <div ng-include="'components/sidenav/sidenav.html'"></div>
+  <md-content class="md-padding" layout-xs="column" layout="row">
+
+    <div flex-xs flex-gt-xs="100" layout="column">
+      <md-card>
+
+        <md-card-content>
+
+            <p>Socket Status : <span ng-model="socket_status">{{ socket_status }}</span></p>
+             <label>Note :</label>
+
+          <p> Halaman ini adalah contoh demo (testing socket) untuk TV Display dan Agent Dashboard(CSR) dengan asumsi agent sudah login dan login di gallery 'BEC' counter 1. Semua modul baik TV Display, KIOSK, maupun Agent Dashboard untuk masuk ke modul harus login dahulu. Karena yang jadi key adalah gallery. Jadi ketika agent login maka otomatis akan ketauan posisi gallery yang aktif.</p>
+            <hr>
+            <p> New Register Customer</p>
+            <md-input-container class="md-block" flex-gt-sm>
+              <label>Name</label>
+              <input ng-model="reg_customer">
+            </md-input-container>
+            <md-input-container class="md-block" flex-gt-sm>
+              <label>Type Of Service</label>
+              <md-select name="type_of_service" ng-model="type_of_service">
+                <md-option ng-repeat="tos in typeofservices">
+                  {{tos}}
+                </md-option>
+              </md-select>
+            </md-input-container>
+            <md-button class="md-raised md-primary" ng-click="register()">Submit</md-button>
+
+            <hr>
+
+            <p> TV Display - Running Text </p>
+
+            <div class="running_text">
+              <h3 ng-model="running_text">{{running_text}}</h3>
+            </div>
+
+            <hr>
+
+            <p> TV Display - Waiting List </p>
+
+            <ul ng-repeat="wl in waiting_list">
+              <li>Customer : {{ wl.customer }} , Queueing Number : {{ wl.queueing_number }}</li>
+            </ul>
+
+            <hr>
+
+            <p> TV Display - Counter List </p>
+
+            <ul ng-repeat="cl in counter_list">
+              <li>Customer : {{ cl.customer }} ,Counter : {{ cl.counter }},  Queueing Number : {{ cl.queueing_number }}</li>
+            </ul>
+
+            <hr>
+            <p> Agent(CSR) - Waiting List </p>
+
+            <ul ng-repeat="wt in agent_waiting_list">
+              <li>Type Of Service : {{ wt.name }} , Count : {{ wt.count }}</li>
+            </ul>
+
+            <hr>
+            <p> Agent(CSR) - Current Customer </p>
+
+             <ul>
+
+               <li>Name : {{ current_customer.customer }}</li>
+               <li>Queueing Number : {{ current_customer.queueing_number }}</li>
+               <li>Counter : {{ current_customer.counter }}</li>
+
+             </ul>
+
+            <hr>
+
+            <p> Agent(CSR) - Input Customer (Walk direct) </p>
+
+            <div layout-gt-sm="row">
+              <md-input-container class="md-block" flex-gt-sm>
+                <label>MDN</label>
+                <input ng-model="mdn">
+              </md-input-container>
+              <md-input-container class="md-block" flex-gt-sm>
+                <md-button class="md-raised md-primary">Query MDN</md-button>
+              </md-input-container>
+            </div>
+            <div layout-gt-sm="row">
+              <md-input-container class="md-block" flex-gt-sm>
+                <ul>
+                  <li>Name: Virdia</li>
+                  <li>MDN: 0838457378787</li>
+                </ul>
+              </md-input-container>
+              <md-input-container class="md-block" flex-gt-sm>
+                <md-button class="md-raised md-primary">Submit</md-button>
+              </md-input-container>
+            </div>
+
+            <hr>
+
+            <p> Agent(CSR) - Tagging Transaction </p>
+
+              <div layout-gt-sm="row">
+                <md-input-container class="md-block" flex-gt-sm>
+                    <ul>
+                      <li>Transaction Name: {{ tagging_level_1 }} </li>
+                      <li>Waiting Time : {{ transaction_duration }}</li>
+                      <li>SLA : {{ sla }}
+                    </ul>
+                </md-input-container>
+              </div>
+
+              <div layout-gt-sm="row">
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Input Tagging Code</label>
+                    <input ng-model="tagging_code">
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-sm>
+                    <md-button class="md-raised md-primary" ng-click="getTaggingTransaction()">Submit</md-button>
+                </md-input-container>
+              </div>
+              <div layout-gt-sm="row">
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Tagging Level 1</label>
+                    <input ng-model="tagging_level_1">
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-sm>
+
+                </md-input-container>
+              </div>
+              <div layout-gt-sm="row">
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Tagging Level 2</label>
+                    <input ng-model="tagging_level_2">
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-sm>
+
+                </md-input-container>
+              </div>
+              <div layout-gt-sm="row">
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Tagging Level 3</label>
+                    <input ng-model="tagging_level_3">
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-sm>
+
+                </md-input-container>
+              </div>
+              <div layout-gt-sm="row">
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Tagging Level 4</label>
+                    <input ng-model="tagging_level_4">
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-sm>
+
+                </md-input-container>
+              </div>
+              <section layout="row" layout-sm="column" layout-align="center center" layout-wrap>
+                <md-button class="md-raised md-primary" ng-click="next_transaction()">Next Transaction</md-button>
+                <md-button class="md-raised md-primary" ng-click="repeat()">Repeat</md-button>
+                <md-button class="md-raised md-primary" ng-click="closed()">Closed</md-button>
+              </section>
+            <hr>
+
+             <section layout="row" layout-sm="column" layout-align="center center" layout-wrap>
+
+              <md-button class="md-raised md-primary" ng-click="next()">Next</md-button>
+              <md-button class="md-raised md-primary" ng-click="call()">Call</md-button>
+              <md-button class="md-raised md-primary" ng-click="recall()">Recall</md-button>
+              <md-button class="md-raised md-primary" ng-click="no_show()">No Show</md-button>
+              <md-button class="md-raised md-primary" ng-click="transfer($event)">Transfer</md-button>
+              <md-button class="md-raised md-primary">Walk Direct</md-button>
+              <md-button class="md-raised md-primary">Break Time</md-button>
+
+
+            </section>
+
+            <hr>
+
+         
+          
+        </md-card-content>
+
+      </md-card>
+    </div>
+  </md-content>
+</div>
+<div ng-include="'components/footer/footer.html'"></div>

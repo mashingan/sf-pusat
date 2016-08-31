@@ -1,0 +1,30 @@
+<div layout-fill layout="column">
+  <md-content flex md-theme="dark" layout layout-align="center center">
+    <div layout="column" layout-align="center center">
+      <div style="text-align: center">
+        <img src="{{logos}}" height="64px" width="auto">
+      </div>
+      <go-empty height="48px"></go-empty>
+      <h4 class="font medium">Queueing System - Agent</h4>
+      <span>Insert your NIK and Password to continue</span>
+      <go-empty height="24px"></go-empty>
+      <form name="form" style="width:320px" class="alt" ng-submit="login()">
+        <md-input-container class="md-block" md-no-float>
+          <input placeholder="NIK" ng-model="user.nik" required/>
+        </md-input-container>
+        <md-input-container class="md-block" md-no-float>
+          <input placeholder="Password" ng-model="user.password" type="password" required/>
+        </md-input-container>
+        <!--<md-input-container class="md-block" md-no-float>-->
+          <!--<md-select ng-model="user.counter" placeholder="Select Counter">-->
+            <!--<md-option ng-repeat="item in counter" ng-value="item">{{item}}</md-option>-->
+          <!--</md-select>-->
+        <!--</md-input-container>-->
+        <md-button class="md-raised md-accent" aria-label="login" type="submit">Login</md-button>
+        <go-empty height="8px"></go-empty>
+        <md-button class="md-raised md-accent" aria-label="back" ng-click="back()">Back</md-button>
+      </form>
+    </div>
+  </md-content>
+  </div>
+</div>

@@ -1,0 +1,57 @@
+<md-dialog style="width:400px" aria-label="transfer">
+  <md-toolbar md-theme="default">
+    <div class="md-toolbar-tools" layout>
+      <span>Transfer</span>
+      <span flex></span>
+      <md-button class="md-icon-button" aria-label="close" ng-click="cancel()">
+        <md-icon class="mdi mdi-close"></md-icon>
+      </md-button>
+    </div>
+  </md-toolbar>
+  <form name="form" ng-submit="submit()">
+    <md-dialog-content class="md-padding" layout="column">
+
+      <md-card flex="none">
+        <md-card-content>
+          <h6>Transfer Current Customer</h6>
+          <go-empty height="8px"></go-empty>
+          <table>
+            <tbody>
+            <tr>
+              <td>Number</td>
+              <td>:</td>
+              <td class="font medium">{{current_customer.queueing_number}}
+            </tr>
+            <tr>
+              <td>Name</td>
+              <td>:</td>
+              <td class="font medium">{{current_customer.customer}}
+            </tr>
+            </tbody>
+          </table>
+        </md-card-content>
+      </md-card>
+      <go-empty height="8px"></go-empty>
+      <md-input-container class="md-block" ng-if="onlineCounter.length > 0">
+        <label>Online Counter</label>
+        <md-select ng-model="set.to_counter">
+          <md-option ng-repeat="item in onlineCounter" ng-value="item">{{item}}</md-option>
+        </md-select>
+      </md-input-container>
+      <md-input-container class="md-block" ng-if="onlineCounter.length > 0">
+        <label>Note</label>
+        <textarea ng-model="set.note" required></textarea>
+      </md-input-container>
+      <div ng-show="onlineCounter.length == 0">
+        <i class="mdi mdi-alert color warning"></i> No other online counter yet
+      </div>
+
+    </md-dialog-content>
+    <md-dialog-actions>
+      <md-button class="md-raised md-accent" aria-label="submit" type="submit"
+                 ng-disabled="onlineCounter.length == 0">
+        SUBMIT
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

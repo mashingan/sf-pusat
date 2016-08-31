@@ -1,0 +1,59 @@
+<md-dialog style="auto" aria-label="transfer">
+  <md-toolbar md-theme="default">
+    <div class="md-toolbar-tools" layout>
+      <span>Incoming Transfer</span>
+      <span flex></span>
+      <md-button class="md-icon-button" aria-label="close" ng-click="cancel()">
+        <md-icon class="mdi mdi-close"></md-icon>
+      </md-button>
+    </div>
+  </md-toolbar>
+  <md-dialog-content class="md-padding" layout="column">
+    <span ng-if="!incoming_transfer_customer">No incoming transfer yet</span>
+    <table ng-if="incoming_transfer_customer">
+      <thead>
+      <tr>
+        <th>Queueing Number</th>
+        <th>Customer</th>
+        <th>From Counter</th>
+        <th>Action</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr ng-repeat="item in incoming_transfer_customer">
+        <td>{{ item.queueing_number }}</td>
+        <td>{{ item.customer }}</td>
+        <td>{{ item.from_counter }}</td>
+        <td><md-button class="md-raised md-primary" ng-click="submit(item)">Proceed</md-button></td>
+      </tr>
+
+      </tbody>
+    </table>
+    <!--<md-radio-group ng-model="set" md-theme="dark" ng-if="incoming_transfer_customer">-->
+      <!--<md-radio-button ng-repeat="item in incoming_transfer_customer" ng-value="item">-->
+        <!--<table>-->
+          <!--<tbody>-->
+          <!--<tr>-->
+            <!--<td>Name</td>-->
+            <!--<td>:</td>-->
+            <!--<td class="font medium">{{item.customer}}-->
+          <!--</tr>-->
+          <!--<tr>-->
+            <!--<td>From</td>-->
+            <!--<td>:</td>-->
+            <!--<td class="font medium">{{item.from_counter}}-->
+          <!--</tr>-->
+          <!--<tr>-->
+            <!--<td>Note</td>-->
+            <!--<td>:</td>-->
+            <!--<td class="font medium">{{item.note}}-->
+          <!--</tr>-->
+          <!--</tbody>-->
+        <!--</table>-->
+      <!--</md-radio-button>-->
+    <!--</md-radio-group>-->
+  </md-dialog-content>
+  <!--<md-dialog-actions ng-if="incoming_transfer_customer">-->
+    <!--<md-button class="md-raised md-accent" aria-label="submit" ng-click="submit()">SELECT</md-button>-->
+  <!--</md-dialog-actions>-->
+</md-dialog>
