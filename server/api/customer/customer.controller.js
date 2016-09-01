@@ -272,7 +272,7 @@ exports.check_mdn = function(req,res){
                 gender: data_parse.gender === '0' ? 'male' : 'female',
                 address: data_parse.address,
                 city: data_parse.areaName,
-                customer_grade: data_parse.customerType
+                customer_grade: data_parse.customerGrade
               });
 
 
