@@ -32,6 +32,20 @@ exports.socketHandler = function (socket, socketio) {
     Socket = socketio;
 };
 
+// lolcal update 2
+exports.localUpdate = function (req, res) {
+  if (req.body._id) delete req.body._id;
+  Gallery.findById(req.params._id, function (err, gallery) {
+    if (err) return handleError(res, err);
+    if (!gallery) return res.status(404).send('Not Found');
+    var updated = _.merge(gallery, req.body);
+    updated.save(function (errsave) {
+      if (errsave) return handleError(res, errsave);
+      return res.status(200).json(gallery);
+    });
+  });
+};
+
 //local update
 exports.localSync = function(req,res){
   Gallery.findById(req.params.id,function(err,gallery){

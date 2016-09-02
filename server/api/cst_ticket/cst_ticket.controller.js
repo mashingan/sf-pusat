@@ -395,82 +395,6 @@ exports.customer_booklist = function(req, res) {
 
   });
 
-/*
-  if(req.params.filter!='-'){
-
-  	Customer.findById(customer_id,function(e, customer){
-  		if(!customer){
-  			return res.status(200).json({ result : "failed", message : 'customer_id not registered.'});
-  		}
-  		CustomerTicket.find({customer: customer.username}, function (err, customer_tickets) {
-
-	      if(err){
-
-	          return res.status(200).json({ result : "failed", message : err});
-	      
-	      }
-
-	      if(customer_tickets.length > 0){
-
-
-	      	asyncLoop( 0, customer_tickets, function(){
-
-	      		return res.status(200).json({result : "success", message : "successfully pull data!", data: data });	
-	      	
-	      	});
-
-	      }else{
-
-	        return res.status(200).json({result : "failed", message : "Data is empty."});
-
-	      }
-
-	    })
-	    .or(filter)
-	    .sort(order)
-	    .skip(offset)
-	    .limit(limit);
-
-  	});
-
-  }else{
-  	
-  	Customer.findById(customer_id,function(e, customer){
-
-  		if(!customer){
-  			return res.status(200).json({ result : "failed", message : 'customer_id not registered.'});
-  		}
-  		CustomerTicket.find({customer: customer.username}, function (err, customer_tickets) {
-
-	      if(err){
-
-	        return res.status(200).json({ result : "failed", message : err});
-	      
-	      }
-
-	      if(customer_tickets.length > 0){
-
-	        asyncLoop( 0, customer_tickets, function(){
-
-	      		return res.status(200).json({result : "success", message : "successfully pull data!", data: data });	
-	      	
-	      	});
-
-	      }else{
-
-	        return res.status(200).json({ result : "failed", message : "Data is empty."});
-
-	      }
-
-	    })
-	    .sort(order)
-	    .skip(offset)
-	    .limit(limit);
-
-  	});
-    
-  }
-*/
   function asyncLoop( i, customer_tickets, callback ) {
 
         var num_rows = customer_tickets.length;
@@ -493,7 +417,7 @@ exports.customer_booklist = function(req, res) {
 
           	for(var a=0; a < gallery.picture.length;a++){
 
-          		gallery_pict.push("http://" + hostname + "/media/gallery/" + gallery.picture[a]);
+          		gallery_pict.push("https://" + hostname + "/media/gallery/" + gallery.picture[a]);
 
           	}
 
@@ -792,7 +716,7 @@ exports.kiosk_new_customer = function(req, res){
 			   				type_of_service : type_of_service,
 			   				gallery : gallery,
 			   				promo : gal.promo,
-			   				picture: "http://" + hostname + "/media/customer/" + uuid + ".jpg",
+			   				picture: "https://" + hostname + "/media/customer/" + uuid + ".jpg",
 			   				queueing_count : queueing_count,
 			   				queueing_number : String(queueing_number) + service.tag, 
 			   				estimate_waiting_time : estimate_waiting_time
@@ -1543,7 +1467,7 @@ exports.kiosk_reg_via_bookcode = function(req, res){
 
 					   				if(customer){
 					   					if(customer.picture){
-					   						picture = "http://" + hostname + "/media/customer/" + customer.picture;
+					   						picture = "https://" + hostname + "/media/customer/" + customer.picture;
 					   					}
 					   					
 					   				}

@@ -22,5 +22,6 @@ router.post('/deleteall/:user', controller.destroy_all);
 router.post('/update', controller.update);
 
 router.get('/local/sync/:id',controller.localSync);
+router.put('/local/update/:id', controller.localUpdate);
 
 module.exports = router;
