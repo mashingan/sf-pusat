@@ -359,7 +359,10 @@ exports.customer_booklist = function(req, res) {
       });
     }
 
-    var cstTickets = CustomerTicket.find({ customer: customer.username });
+    var cstTickets = CustomerTicket.find({ $or: [
+      {customer: customer.username},
+      {customer: customer.name}]
+    });
     if (req.params.filter !== '-') {
       cstTickets = cstTickets.or(filter);
     }
@@ -385,8 +388,8 @@ exports.customer_booklist = function(req, res) {
         }
         else {
           return res.status(200).json({
-            result: 'success',
-            message: 'successfully pulling data!'
+            result: 'failed',
+            message: 'no data available'
           });
         }
 
