@@ -26,6 +26,8 @@ var TaggingTransaction = require('../tagging_transaction/tagging_transaction.mod
 var TypeOfBreaktime = require('../type_of_breaktime/typeofbreaktime.model');
 var TypeOfService = require('../type_of_service/typeofservice.model');
 
+var http = require('http');
+
 
 exports.socketHandler = function (socket, socketio) {
 
@@ -180,7 +182,7 @@ exports.near_me = function(req,res){
 
               var estimate_time = sla / type_of_service.length * queueing_count;
 
-              if(estimate_time == null){
+              if(estimate_time === null){
 
                 estimate_time = 0;
 
@@ -249,7 +251,7 @@ exports.set_gallery_open = function(req, res){
       var pict = "";
       if( i < num_rows ) {
           
-          if(galleries[i].picture.length!=0){
+          if(galleries[i].picture.length!==0){
             pict = galleries[i].picture[0];
             fs.stat(path.join(__dirname,"../../../client/media/gallery/"+galleries[i].picture[0]), function(err, stat) {
                 
@@ -303,7 +305,7 @@ exports.gallery_open = function(req, res){
       var pict = "";
       if( i < num_rows ) {
           
-          if(galleries[i].picture.length!=0){
+          if(galleries[i].picture.length!==0){
             pict = galleries[i].picture[0];
             fs.stat(path.join(__dirname,"../../../client/media/gallery/"+galleries[i].picture[0]), function(err, stat) {
                 
@@ -345,25 +347,53 @@ exports.index = function(req, res) {
   var order = req.params.order || 'name';
   var offset = (page-1) * limit;
   var hostname = req.headers.host;
+  var filter = '-';
   if(req.params.filter){
 
     var re = new RegExp(req.params.filter, 'i');
-    var filter = [
+    filter = [
       { 'name': { $regex: re }},
       { 'province': { $regex: re }},
       { 'city': { $regex: re }}
     ];
-
-  }else{
-
-    var filter = '-';
 
   }
 
   var queueing_count;
   var data = [];
 
-  if(req.params.filter!='-'){
+  var galleries = Gallery.find();
+  if (req.params.filter !== '-') {
+    galleries = galleries.or(filter);
+  }
+  galleries
+    .sort(order)
+    .skip(offset)
+    .limit(limit)
+    .exec(function (err, docs) {
+      if (err) return res.status(200).json({
+        result: 'failed',
+        message: err.message
+      });
+      if (docs) {
+        asyncLoop(0, docs, function () {
+          return res.status(200).json({
+            result: 'success',
+            message: 'success pulling data',
+            data: data
+          });
+        });
+      }
+      else {
+        return res.status(200).json({
+          result: 'failed',
+          message: 'data is empty'
+        });
+      }
+    });
+
+  /*
+  if(req.params.filter !=='-'){
     Gallery.find({},function(err, galleries){
 
       if(err){
@@ -424,6 +454,7 @@ exports.index = function(req, res) {
     .skip(offset)
     .limit(limit);
   }
+  */
 
 
   function asyncLoop( i,galleries, callback ) {
@@ -458,7 +489,7 @@ exports.index = function(req, res) {
 
               var estimate_time = sla / type_of_service.length * queueing_count;
 
-              if(estimate_time == null){
+              if(estimate_time === null){
 
                 estimate_time = 0;
 
@@ -513,6 +544,22 @@ exports.list = function(req, res) {
     c = count;
   });
 
+  var gall = Gallery.find();
+  if (req.params.filter !== '-') {
+    gall = gall.or(filter);
+  }
+  gall
+    .sort(order)
+    .skip(offset)
+    .limit(limit)
+    .exec(function (err, galleries) {
+      if (err) return res.status(500).send(err.message);
+      var result = [{ count: c, data_gallery: galleries }];
+      res.status(200).json(result);
+    });
+
+
+  /*
   if(req.params.filter!='-'){
 
     Gallery.find({}, function (err, galleries) {
@@ -537,9 +584,9 @@ exports.list = function(req, res) {
     .limit(limit);
 
   }
-
-
+  */
 };
+
 exports.gallery_stat_count = function(req, res){
 
   Gallery.count({}, function(err, count){
@@ -621,7 +668,7 @@ exports.show = function(req, res) {
 
       var estimate_time = sla / gallery.type_of_service.length * queueing_count;
 
-      if(estimate_time == null){
+      if(estimate_time === null){
 
         estimate_time = 0;
 
@@ -704,11 +751,25 @@ exports.create = function(req, res) {
   //file upload path
   form.parse(req, function(err, fields, files) {
 
+    var tos = JSON.parse(fields.type_of_service).map(function (item) {
+      return { name: item.type };
+    });
 
+    var type_of_service;
+    TypeOfService.find({ $or: tos }, function (errtos, docs) {
+      if (errtos) {
+        console.log('Cannot find type of service');
+        return;
+      }
+      type_of_service = docs;
+    });
+
+    /*
     var type_of_service = JSON.parse(fields.type_of_service).map(function(item) {
                                 delete item.$$hashKey;
                                 return item;
                             });
+                            */
 
     var open_days = JSON.parse(fields.open_days).map(function(item) {
                                 delete item.$$hashKey;
@@ -723,6 +784,8 @@ exports.create = function(req, res) {
     req.body.name = fields.name;
     req.body.address = fields.address;
     req.body.city = fields.city;
+    req.body.region = fields.region;
+    req.body.ipAddress = fields.ipAddress;
     req.body.province = fields.province;
     req.body.location = [fields.longitude,fields.latitude];
     req.body.type_of_service = type_of_service;
@@ -798,7 +861,7 @@ exports.create = function(req, res) {
       
         User.findOne({nik : ua[i].user},function(err, user){
 
-          if(user.picture!=""){
+          if(user.picture!==""){
 
             avatar = user.picture;
             
@@ -808,7 +871,7 @@ exports.create = function(req, res) {
                   avatar = 'default_avatar.jpg';
                 }
 
-                if(type=="dashboard"){
+                if(type==="dashboard"){
                   ua_dashboard.push({ 
 
                     modul: ua[i].modul,
@@ -837,7 +900,7 @@ exports.create = function(req, res) {
 
           }else{
 
-            if(type=="dashboard"){
+            if(type==="dashboard"){
               ua_dashboard.push({ 
 
                 modul: ua[i].modul,
@@ -938,7 +1001,7 @@ exports.destroy = function(req, res) {
       
         User.findOne({nik : ua[i].user},function(err, user){
 
-          if(user.picture!=""){
+          if(user.picture!==""){
 
             avatar = user.picture;
             
@@ -948,7 +1011,7 @@ exports.destroy = function(req, res) {
                   avatar = 'default_avatar.jpg';
                 }
 
-                if(type=="dashboard"){
+                if(type==="dashboard"){
                   ua_dashboard.push({ 
 
                     modul: ua[i].modul,
@@ -977,7 +1040,7 @@ exports.destroy = function(req, res) {
 
           }else{
 
-            if(type=="dashboard"){
+            if(type==="dashboard"){
               ua_dashboard.push({ 
 
                 modul: ua[i].modul,
@@ -1013,6 +1076,8 @@ exports.destroy = function(req, res) {
       }
   } 
 };
+
+
 exports.update = function(req, res, next) {
 
   var ua_dashboard = [];
@@ -1024,27 +1089,36 @@ exports.update = function(req, res, next) {
   form.parse(req, function(err, fields, files) {
 
     Gallery.findById(fields.id,function(err, gallery){
-
-
       if(gallery){
-
-        var type_of_service = JSON.parse(fields.type_of_service).map(function(item) {
-                                    delete item.$$hashKey;
-                                    return item;
-                                });
-      
-/*
-        var type_of_service = [];
-        TypeOfService.find({}, function (err, result) {
-          for (var i; i < result.length; i++)
-            type_of_service.push(result[i].name);
+        var tos = JSON.parse(fields.type_of_service)
+          .map(function (item) {
+            return { name: item.type };
+          });
+    
+        var type_of_service;
+        TypeOfService.find({ $or: tos }, function (errtos, docs) {
+          if (err) {
+            console.log('No type of services found');
+            return;
+          }
+          type_of_service = docs;
         });
-*/
 
-        var open_days = JSON.parse(fields.open_days).map(function(item) {
-                                    delete item.$$hashKey;
-                                    return item;
-                                });
+        /*
+        var type_of_service = JSON.parse(fields.type_of_service)
+          .map(function (item) {
+            delete item.$$haskkey;
+            return item;
+          });
+        */
+
+      
+
+        var open_days = JSON.parse(fields.open_days)
+          .map(function(item) {
+            delete item.$$hashKey;
+            return item;
+        });
 
 
         for(var i = 0; i < Object.keys(files).length; i++){
@@ -1054,6 +1128,8 @@ exports.update = function(req, res, next) {
         gallery.name = fields.name;
         gallery.address = fields.address;
         gallery.city = fields.city;
+        gallery.region = fields.region;
+        gallery.ipAddress = fields.ipAddress;
         gallery.province = fields.province;
         gallery.location = [fields.longitude,fields.latitude];
         gallery.type_of_service = type_of_service;
@@ -1064,6 +1140,24 @@ exports.update = function(req, res, next) {
         gallery.open_days = open_days;
 
         gallery.save(function(err){
+
+          // auto-sync to local gallery
+          http.request({
+            host: gallery.ipAddress,
+            port: gallery.port || 9000,
+            path: '/api/galleries/update',
+            method: 'post',
+            headers: { 'Content-Type': 'application/json' }
+          }, function (response) {
+            var output = '';
+            response.setEncoding('utf8');
+            response.on('data', function (chunk) {
+              output += chunk;
+            });
+            response.on('end', function () {
+              console.log('output: ', output);
+            });
+          }).write(req).end();
 
           UserActivity.create({ modul : 'Gallery', action: 'Update', user: fields.user_op },function(err, log){
 
@@ -1134,7 +1228,7 @@ exports.update = function(req, res, next) {
       
         User.findOne({nik : ua[i].user},function(err, user){
 
-          if(user.picture!=""){
+          if(user.picture!==""){
 
             avatar = user.picture;
             
@@ -1144,7 +1238,7 @@ exports.update = function(req, res, next) {
                   avatar = 'default_avatar.jpg';
                 }
 
-                if(type=="dashboard"){
+                if(type==="dashboard"){
                   ua_dashboard.push({ 
 
                     modul: ua[i].modul,
@@ -1173,7 +1267,7 @@ exports.update = function(req, res, next) {
 
           }else{
 
-            if(type=="dashboard"){
+            if(type==="dashboard"){
               ua_dashboard.push({ 
 
                 modul: ua[i].modul,
@@ -1277,7 +1371,7 @@ exports.destroy_all = function(req, res) {
       
         User.findOne({nik : ua[i].user},function(err, user){
 
-          if(user.picture!=""){
+          if(user.picture!==""){
 
             avatar = user.picture;
             
@@ -1287,7 +1381,7 @@ exports.destroy_all = function(req, res) {
                   avatar = 'default_avatar.jpg';
                 }
 
-                if(type=="dashboard"){
+                if(type==="dashboard"){
                   ua_dashboard.push({ 
 
                     modul: ua[i].modul,
@@ -1316,7 +1410,7 @@ exports.destroy_all = function(req, res) {
 
           }else{
 
-            if(type=="dashboard"){
+            if(type==="dashboard"){
               ua_dashboard.push({ 
 
                 modul: ua[i].modul,

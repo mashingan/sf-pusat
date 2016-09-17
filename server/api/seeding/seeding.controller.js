@@ -7,6 +7,7 @@ var tagging_transaction = require('../tagging_transaction/tagging_transaction.mo
 var typeofbreaktime = require('../type_of_breaktime/typeofbreaktime.model');
 var typeofservice = require('../type_of_service/typeofservice.model');
 var user = require('../user/user.model');
+var agent_breaktime = require('../agent_breaktime/agent_breaktime.model');
 
 var Models = {
   customer: customer,
@@ -17,30 +18,34 @@ var Models = {
   tagging_transaction: tagging_transaction,
   typeofbreaktime: typeofbreaktime,
   typeofservice: typeofservice,
-  user: user
+  user: user,
+  agent_breaktime: agent_breaktime
 };
 
 module.exports.save = function (req, res) {
   console.log(req.params.modelpath);
-  var Model = Models[req.params.modelpath];
+  var modelpath = req.params.modelpath;
+  var Model = Models[modelpath];
   if (!Model)
     return res.status(404).json({
       result: 'failed',
-      message: 'Incorrect db collection'
+      message: 'incorrect db collection'
     });
 
 
   console.log(req.body.entry);
-  console.log('type entry:', typeof req.body.entry);
   Model.create(req.body.entry, function (err, docs) {
     if (err) {
       console.log(err.message);
       return res.status(404).json({
         result: 'failed',
-        message: 'Cannot save the data'
+        message: 'cannot save the data'
       });
     }
-    res.status(200).json({ status: 'success' });
+    res.status(200).json({
+      result: 'success',
+      message: 'saving to ' + modelpath + ' collection success'
+    });
 
   });
   //res.status(200).json({ status: 'success' });
@@ -48,7 +53,8 @@ module.exports.save = function (req, res) {
 
 module.exports.remove = function (req, res) {
   console.log(req.params.modelpath);
-  var Model = Models[req.params.modelpath];
+  var modelpath = req.params.modelpath;
+  var Model = Models[modelpath];
   if (!Model)
     return res.status(404).json({
       result: 'failed',
@@ -57,12 +63,12 @@ module.exports.remove = function (req, res) {
 
   Model.remove({}, function (err, result) {
     if (err) return res.status(404).json({
-      status: 'failed',
+      result: 'failed',
       message: err.message
     });
     res.status(200).json({
-      status: 'success',
-      message: 'drop collection succeed'
+      result: 'success',
+      message: 'drop ' + modelpath + ' collection succeed'
     });
   });
 };

@@ -15,6 +15,7 @@ var GallerySchema = new Schema({
     type: [Number],
     index: '2d'      
   },
+  region: String,
   city: String,
   province: String,
   open_days: Array,
