@@ -49,4 +49,66 @@ performanceData.header = [{
   label: '% (idle)'
 }];
 
+var transactionData = {};
+transactionData.header = [{
+  name: 'date',
+  label: 'Date'
+}, {
+  name: 'nik',
+  label: 'User ID'
+}, {
+  name: 'name',
+  label: 'User Name',
+}, {
+  name: 'gallery',
+  label: 'Gallery'
+}, {
+  name: 'region',
+  label: 'Region'
+}, {
+  name: 'service',
+  label: 'Group Antrian'
+}, {
+  name: 'ticketNumber',
+  label: 'Ticket Number'
+}, {
+  name: 'mdn',
+  label: 'MDN'
+}, {
+  name: 'printedAt',
+  label: 'Ticket Printed at'
+}, {
+  name: 'calledAt',
+  label: 'Ticket Called at'
+}, {
+  name: 'closedAt',
+  label: 'Ticket Closed at'
+}, {
+  name: 'waitingTime',
+  label: 'Waiting Time'
+}, {
+  name: 'handlingTime',
+  label: 'Handling Time'
+}, {
+  name: 'totalTime',
+  label: 'Customer Time'
+}, {
+  name: 'taggingCode',
+  label: 'Tagging Code'
+}, {
+  name: 'tagLevel1',
+  label: 'Transaction Level 1'
+}, {
+  name: 'tagLevel2',
+  label: 'Transaction Level 2'
+}, {
+  name: 'tagLevel3',
+  label: 'Transaction Level 3'
+}, {
+  name: 'tagLevel4',
+  label: 'Transaction Level 4'
+}];
+
+
 module.exports.performanceData = performanceData;
+module.exports.transactionData = transactionData;

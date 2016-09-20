@@ -99,10 +99,48 @@ function getDate (when) {
   return date;
 }
 
-module.exports.getTotalDuration = getTotalDuration;
-module.exports.getTimeString = getTimeString;
-module.exports.splitTime = splitTime;
-module.exports.secondToTimeString = secondToTimeString;
-module.exports.strDurToSecond = strDurToSecond;
-module.exports.getDate = getDate;
-module.exports.ONEDAY = ONEDAY;
+function getToday () {
+  var today = new Date();
+  today.setMilliseconds(0);
+  today.setSeconds(0);
+  today.setMinutes(0);
+  today.setHours(0);
+  return today;
+}
+
+function getTomorrow () {
+  var tomorrow = getToday().getTime() + ONEDAY;
+  return new Date(tomorrow);
+}
+
+function opDurations(durations, operations, initial) {
+  initial = typeof initial === 'number' ? initial :
+    typeof initial === 'string' ? strDurToSecond(initial) : 0;
+  return secondToTimeString(durations
+      .map(strDurToSecond)
+      .reduce(operations, initial));
+}
+
+function getMiniMax (limit, page) {
+  limit = limit < 1 || limit === '-' ? 20 : limit;
+  page = page < 1 || page === '-' ? 1 : page;
+  
+  var mindata = (page - 1) * limit;
+  var maxdata = mindata + limit;
+
+  return [mindata, maxdata];
+}
+
+module.exports = {
+  getTotalDuration: getTotalDuration,
+  getTimeString: getTimeString,
+  opDurations: opDurations,
+  splitTime: splitTime,
+  secondToTimeString: secondToTimeString,
+  strDurToSecond: strDurToSecond,
+  getDate: getDate,
+  getToday: getToday,
+  getTomorrow: getTomorrow,
+  getMiniMax: getMiniMax,
+  ONEDAY: ONEDAY
+}

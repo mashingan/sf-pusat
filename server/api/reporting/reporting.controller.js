@@ -6,6 +6,7 @@ var TaggingTransaction = require('../customer_tagging_transaction/' +
     'customer_tagging_transaction.model');
 
 var PerformanceData = require('./performanceData');
+var transactionsInfo = require('./transactionData.js');
 var reportUtil = require('./reporting.util');
 var reportData = require('./reporting.data');
 
@@ -16,8 +17,7 @@ module.exports.performance = function (req, res) {
   var gallery = req.params.where;
   var date = reportUtil.getDate(req.params.when);
   
-  let mindata = (page - 1) * limit;
-  let maxdata = mindata + limit;
+  var [mindata, maxdata] = reportUtil.getMinimax(limit, page);
 
   var staffs = [];
   var nameNik = [];
@@ -29,23 +29,25 @@ module.exports.performance = function (req, res) {
     result.breaktimes = tos;
   });
   result.data = [];
-  emitter.on('done', function () {
+  emitter.once('done', function () {
     res.status(200).json(result);
   });
 
+  function getTimeMapped (el) {
+    return new Date(el).getTime();
+  }
 
-  emitter.on('populate-data', function () {
+  emitter.once('populate-data', function () {
     gallery = gallery === '-' ? '' : gallery;
-    for (let i = 0, elemCount = 0;
+    for (var i = 0, elemCount = 0;
         i < nameNik.length || elemCount < maxdata;
         i++) {
-      let when = req.params.when;
-      let user = nameNik[i];
-      let dt;
+      var when = req.params.when;
+      var user = nameNik[i];
+      var dt;
       if (when && typeof when.split === 'function' &&
           (dt = when.split(':')).length === 2) {
-        let from = new Date(dt[0]).getTime();
-        let to = new Date(dt[1]).getTime();
+        var [from, to] = dt.map(getTimeMapped);
         while (to >= from) {
           if (elemCount >= mindata && elemCount < maxdata)
             result.data.push(new PerformanceData(user.name, user.nik,
@@ -114,7 +116,15 @@ module.exports.performance = function (req, res) {
 }
 
 module.exports.transaction = function (req, res) {
-  toBeImplemented(res);
+  var limit = req.params.limit;
+  var page = req.params.page;
+  var where = req.params.where;
+  var who = req.params.who;
+  var when = req.params.when;
+
+  var [mindata, maxdata] = reportUtil.getMinimax(limit, page);
+  transactionsInfo(res, when, where, who, mindata, maxdata);
+  
 };
 
 module.exports.customer = function (req, res) {

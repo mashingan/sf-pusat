@@ -14,11 +14,10 @@ var CustomerTaggingTransaction = new Schema({
   counter:Number,
   duration:String,
   exceeding_sla: {
-    
     type: Boolean,
     default: false
-
-  }
+  },
+  sync: { type: Boolean, default: false }
 },{
     timestamps: true
 });

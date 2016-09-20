@@ -57,15 +57,15 @@ function PerformanceData (name, nik, date, gallery) {
         return;
       }
 
-      let logins = docs.filter(function (doc) {
+      var logins = docs.filter(function (doc) {
         return doc.activity === 'login';
       });
 
-      let logouts = docs.filter(function (doc) {
+      var logouts = docs.filter(function (doc) {
         return doc.activity === 'logout';
       });
       
-      let breaktimes = docs.filter(function (doc) {
+      var breaktimes = docs.filter(function (doc) {
         return doc.activity !== 'login' && doc.activity !== 'logout';
       });
       
@@ -77,18 +77,19 @@ function PerformanceData (name, nik, date, gallery) {
             logouts[logouts.length - 1].time);  // get last logout
         self.totalLogout = logouts.length;
         self.totalLogoutTime = '0';
-        for (let idxout = 0, idxin = 1;
+        for (var idxout = 0, idxin = 1;
             idxout < logouts.length || idxin < logins.length;
             idxout++, idxin++) {
-          let startTiming = logouts[idxout];
-          let endTiming = logins[idxin];
-          let diffTime = new Date(endTiming.getTime () -
+          var startTiming = logouts[idxout].time;
+          var endTiming = logins[idxin].time;
+          var diffTime = new Date(endTiming.getTime () -
               startTiming.getTime());
-          let diffDuration = reportUtil.splitTime(
+          var diffDuration = reportUtil.splitTime(
               diffTime, 'toUTCString', 4);
-          self.totalLogoutTime = reportUtil.secondToTimeString(
-              reportUtil.strDurToSecond(self.totalLogoutTime) +
-              reportUtil.strDurToSecond(diffDuration));
+          self.totalLogoutTime = reportUtil.opDurations([
+              self.totalLogoutTime, diffDuration],
+              function (a,b) { return a+b; },
+              self.totalLogoutTime);
         }
         self.averageLogoutTime = reportUtil.secondToTimeString(parseInt(
               reportUtil.strDurToSecond(self.totalLogoutTime) /
@@ -98,15 +99,15 @@ function PerformanceData (name, nik, date, gallery) {
       self.totalBreaktime = reportUtil.getTotalDuration(breaktimes);
 
       breaktimes.forEach(function (breaktime) {
-        let idx = self.breaktimes.findIndex(function (brk) {
+        var idx = self.breaktimes.findIndex(function (brk) {
           return breaktime.activity === brk.activity;
         });
 
         if (idx === -1) {
           self.breaktimes.push(breaktime);
         } else {
-          let brk = self.breaktimes[idx];
-          let totalduration = reportUtil.getTotalDuration([brk, breaktime]);
+          var brk = self.breaktimes[idx];
+          var totalduration = reportUtil.getTotalDuration([brk, breaktime]);
           self.breaktimes[idx].duration = totalduration;
         }
       });
@@ -135,7 +136,7 @@ function PerformanceData (name, nik, date, gallery) {
           parseInt(reportUtil.strDurToSecond(self.totalTransactionTime) /
             self.totalTransaction)) :
         '0';
-      let activeTime = reportUtil.strDurToSecond(self.logout) -
+      var activeTime = reportUtil.strDurToSecond(self.logout) -
         reportUtil.strDurToSecond(self.login) -
         reportUtil.strDurToSecond(self.totalLogoutTime);
       self.idleTime = reportUtil.secondToTimeString(activeTime -
