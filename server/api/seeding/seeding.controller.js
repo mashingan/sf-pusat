@@ -8,6 +8,7 @@ var typeofbreaktime = require('../type_of_breaktime/typeofbreaktime.model');
 var typeofservice = require('../type_of_service/typeofservice.model');
 var user = require('../user/user.model');
 var agent_breaktime = require('../agent_breaktime/agent_breaktime.model');
+var productivity = require('../productivity/productivity.model');
 
 var Models = {
   customer: customer,
@@ -19,7 +20,8 @@ var Models = {
   typeofbreaktime: typeofbreaktime,
   typeofservice: typeofservice,
   user: user,
-  agent_breaktime: agent_breaktime
+  agent_breaktime: agent_breaktime,
+  productivity: productivity
 };
 
 module.exports.save = function (req, res) {

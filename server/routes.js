@@ -34,6 +34,7 @@ module.exports = function(app) {
   app.use('/api/sms', require('./api/sms'));
   app.use('/api/seeding', require('./api/seeding'));
   app.use('/api/version', require('./api/version'));
+  app.use('/api/reporting', require('/api/reporting'));
 
   app.use('/auth', require('./auth'));
   
