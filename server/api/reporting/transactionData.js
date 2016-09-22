@@ -93,29 +93,24 @@ function transactionsInfo(res, when, where, who, mindata, maxdata) {
   });
 
   emitter.once('populate-data', function () {
-    var date = (when && typeof when.split) ?
-      when.split(':').map(function (dt) { return new Date(dt); }) :
-      [reportUtil.getToday(), reportUtil.getTomorrow()];
-    var [from, to] = date.map(function (e) { return e.getTime(); });
+    var [from, to] = reportUtil.getFromTo(when);
 
-    var ticketTagging = TicketTagging.find();
-    var filters = {};
-    filters.$or = {};
-    if (galleries.length > 0) {
-      galleries.forEach(function (el) {
-        filters.$or.push({ gallery: el });
+    var ticketTagging;
+    reportUtil.galleryFilteredQuery(TicketTagging, galleries)
+      .then(function (result) {
+        ticketTagging = result;
+      }, function (notFiltered) {
+        ticketTagging = notFiltered;
       });
-      ticketTagging = ticketTagging.or(filters);
-    }
 
     if (to) {
       while (to >= from && elemCounter < maxdata) {
         var dt = reportUtil.getDate(to);
-        ticketTagging.or(dt).exec(taggingQuery);
+        ticketTagging.or({ date: dt }).exec(taggingQuery);
         to -= reportUtil.ONEDAY;
       }
     } else {
-      ticketTagging.or(reportUtil.getDate(from)).exec(taggingQuery);
+      ticketTagging.or({date:reportUtil.getDate(from)}).exec(taggingQuery);
     }
     emitter.emit('done');
   });
@@ -129,28 +124,23 @@ function transactionsInfo(res, when, where, who, mindata, maxdata) {
           user = foundUser;
         });
       }
-      if (elemCounter >= mindata && elemCounter < maxdata) {
-        if ((!who || who === '-') || !user ||
-            user.gallery === tag.gallery)
-        {
-          toReturn.data.push(new TransactionData(tag));
-          elemCounter++;
-        }
+      if (reportUtil.testCounter({ min: mindata, max: maxdata, who: who,
+        user: user, tag: tag, counter: elemCounter }))
+      {
+        toReturn.data.push(new TransactionData(tag));
       }
+      elemCounter++;
+      if (elemCounter >= maxdata) emitter.emit('done');
     });
-    if (elemCounter >= maxdata) emitter.emit('done');
   }
 
   // Getting all galleries if defined region
-  if (placeInfo === 'region') {
-    Gallery.find({ region: placeName }, function (err, galls) {
-      galleries = Array.isArray(galls) ? galls : [galls];
-      emitter.emit('populate-data');
-    });
-  } else if (placeInfo === 'gallery') {
-    galleries = [placeName];
+  reportUtil.getGalleries(when).then(function (success) {
+    galleries = success;
     emitter.emit('populate-data');
-  }
+  }, function (failed) {
+    galleries = failed;
+  });
 }
 
 module.exports = transactionsInfo;

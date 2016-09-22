@@ -7,6 +7,7 @@ var TaggingTransaction = require('../customer_tagging_transaction/' +
 
 var PerformanceData = require('./performanceData');
 var transactionsInfo = require('./transactionData.js');
+var customersInfo = require('./customerData.js');
 var reportUtil = require('./reporting.util');
 var reportData = require('./reporting.data');
 
@@ -128,7 +129,13 @@ module.exports.transaction = function (req, res) {
 };
 
 module.exports.customer = function (req, res) {
-  toBeImplemented(res);
+  var limit = req.params.limit;
+  var page = req.params.page;
+  var where = req.params.where;
+  var when = req.params.when;
+
+  var [mindata, maxdata] = reportUtil.getMinimax(limit, page);
+  customersInfo(res, when, where, mindata, maxdata);
 };
 
 module.exports.productivity = function (req, res) {

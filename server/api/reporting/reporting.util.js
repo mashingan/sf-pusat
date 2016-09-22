@@ -1,3 +1,5 @@
+var Gallery = require('../gallery/gallery.model');
+
 const ONEDAY = 1000 * 60 * 60 * 24; // one day in milliseconds
 
 function splitTime(date, what, which) {
@@ -66,27 +68,23 @@ function getDate (when) {
       typeof when.getTime === 'function') {
     return {
       $gte: when,
-      $lt: new Date(when.getTime() + ONEDAY)
+      $lt: getTomorrow(when)
     };
   }
 
   var times = when.split(':');
 
-  var today = new Date();
-  today.setSeconds(0);
-  today.setMinutes(0);
-  today.setHours(0);
-
   var date;
   if (when === '-') {
     date = {
-      $gte: today,
-      $lt: new Date(today.getTime() + ONEDAY)
+      $gte: getToday(),
+      $lt: getTomorrow()
     };
   } else if (when !== 'all' && times.length === 1) {
+    var time = new Date(times[0]);
     date = {
-      $gte: new Date(times[0]),
-      $lt: new Date(Date.parse(times[0]) + ONEDAY)
+      $gte: time,
+      $lt: getTomorrow(time)
     };
   } else if (times.length === 2) {
     date = {
@@ -108,7 +106,8 @@ function getToday () {
   return today;
 }
 
-function getTomorrow () {
+function getTomorrow (from) {
+  if (from) return new Date(from.getTime() + ONEDAY);
   var tomorrow = getToday().getTime() + ONEDAY;
   return new Date(tomorrow);
 }
@@ -131,6 +130,61 @@ function getMiniMax (limit, page) {
   return [mindata, maxdata];
 }
 
+function testCounter (obj) {
+  if (obj.counter >= obj.min && obj.counter < obj.max)
+    if ((!obj.who || obj.who === '-') || !obj.user ||
+        obj.user.gallery === obj.tag.gallery)
+      return true;
+  return false;
+}
+
+function getFromTo (when) {
+  var date = (when && typeof when.split && when !== '-') ?
+    when.split(':').map(function (dt) { return new Date(dt); }) :
+    [getToday(), getTomorrow()];
+  return date.map(function (e) { return e.getTime(); });
+}
+
+function getGalleries (where) {
+  return new Promise (function (resolve, reject) {
+    var [placeInfo, placeName] = 
+    (where && typeof where.split === 'function' &&
+     ( where.includes('gallery') || where.includes('region'))) ?
+    where.split(':') : [];
+    var galleries = [];
+    
+    if (placeInfo === 'region') {
+      Gallery.find({ region: placeName }, function (err, galls) {
+        galls = Array.isArray(galls)? galls : [galls];
+        galls.forEach(function (gall) {
+          galleries.push(gall.name);
+        });
+        resolve(galleries);
+      });
+    } else if (placeInfo === 'gallery') {
+      galleries = [placeName];
+      resolve(galleries);
+    } else {
+      reject(galleries);
+    }
+  });
+}
+
+function galleryFilteredQuery (db, galleries) {
+  return new Promise (function (resolve, reject) {
+    if (galleries.length > 0) {
+      var filters = {};
+      filters.$or = [];
+      galleries.forEach(function (el) {
+        filters.$or.push({ gallery: el });
+      });
+      resolve(db.find(filters));
+    } else {
+      reject(db.find());
+    }
+  });
+}
+
 module.exports = {
   getTotalDuration: getTotalDuration,
   getTimeString: getTimeString,
@@ -142,5 +196,9 @@ module.exports = {
   getToday: getToday,
   getTomorrow: getTomorrow,
   getMiniMax: getMiniMax,
+  testCounter: testCounter,
+  getFromTo: getFromTo,
+  getGalleries: getGalleries,
+  galleryFilteredQuery: galleryFilteredQuery,
   ONEDAY: ONEDAY
 }

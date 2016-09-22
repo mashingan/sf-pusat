@@ -109,6 +109,35 @@ transactionData.header = [{
   label: 'Transaction Level 4'
 }];
 
+var customerData = {};
+customerData.header = [{
+  name: 'date',
+  label: 'Date'
+}, {
+  name: 'region',
+  label: 'Region'
+}, {
+  name: 'gallery',
+  label: 'Gallery Name'
+}, {
+  name: 'visitor',
+  label: 'Visitor'
+}, {
+  name: 'served',
+  label: 'Served'
+}, {
+  name: 'skipped',
+  label: 'No Show'
+}, {
+  name: 'withinSL',
+  label: 'SL'
+}, {
+  name: 'totalCSR',
+  label: 'Total CSR'
+}];
 
-module.exports.performanceData = performanceData;
-module.exports.transactionData = transactionData;
+module.exports = {
+  performanceData: performanceData,
+  transactionData: transactionData,
+  customerData: customerData
+};

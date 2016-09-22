@@ -5,6 +5,8 @@ var mongoose = require('mongoose'),
 
 var ProductivitySchema = new Schema({
   date:Date,
+  gallery: String,
+  region: String,
   customerTransaction:{
     walkIn:{type:Number,default:0},
     answer:{type:Number,default:0},
