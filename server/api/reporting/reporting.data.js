@@ -136,8 +136,93 @@ customerData.header = [{
   label: 'Total CSR'
 }];
 
+var productivityData = {};
+productivityData.header = [{
+  name: 'date',
+  label: 'Date'
+}, {
+  name: 'gallery',
+  label: 'Gallery'
+}, {
+  name: 'region',
+  label: 'Region'
+}, {
+  customerTransaction:[{
+      name: 'walkIn',
+      label: 'Walk in'
+    }, {
+      name: 'answer',
+      label: 'Answer'
+    }, {
+      name: 'answerPercentage',
+      label: 'Answer (%)'
+    }, {
+      name: 'walkAway',
+      label: 'Walk away'
+    }, {
+      name: 'walkAwayPercentage',
+      label: 'Walk away (%)'
+    }, {
+      name: 'waiting',
+      label: 'Waiting'
+    }],
+  transactionTime:[{
+      name: 'total',
+      label: 'Total'
+    }, {
+      name: 'average',
+      label: 'Average'
+    }, {
+      name: 'maximum',
+      label: 'Max'
+    }, {
+      name: 'minimum',
+      label: 'Min'
+    }],
+  waitingTime10:[{
+      name: 'average',
+      label: 'Average'
+    }, {
+      name: 'ltSL',
+      label: '< SL'
+    }, {
+      name: 'ltSLPercentage',
+      label: '(%)'
+    }, {
+      name: 'gtSL',
+      label: '> SL'
+    }, {
+      name: 'gtSLPercentage',
+      label: '(%)'
+    }, {
+      name: 'max',
+      label: 'Max'
+    }
+  ],
+  waitingTime15:[{
+      name: 'average',
+      label: 'Average'
+    }, {
+      name: 'ltSL',
+      label: '< SL'
+    }, {
+      name: 'ltSLPercentage',
+      label: '(%)'
+    }, {
+      name: 'gtSL',
+      label: '> SL'
+    }, {
+      name: 'gtSLPercentage',
+      label: '(%)'
+    }, {
+      name: 'max',
+      label: 'max'
+    }]
+}];
+
 module.exports = {
   performanceData: performanceData,
   transactionData: transactionData,
-  customerData: customerData
+  customerData: customerData,
+  productivityData: productivityData
 };

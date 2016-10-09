@@ -7,7 +7,7 @@ var crypto = require('crypto');
 var CustomerSchema = new Schema({
   username: String,
   name: String,
-  mdn: String,
+  mdn: { type: String, unique: true },
   gender: String,
   birthday: String,
   city: String,
@@ -91,19 +91,19 @@ CustomerSchema
 }, 'The specified email address is already in use.');
 
 // // Validate email is not taken
-// CustomerSchema
-//   .path('MDN')
-//   .validate(function(value, respond) {
-//     var self = this;
-//     this.constructor.findOne({MDN: value}, function(err, customer) {
-//       if(err) throw err;
-//       if(customer) {
-//         if(self.id === customer.id) return respond(true);
-//         return respond(false);
-//       }
-//       respond(true);
-//     });
-// }, 'MDN is already in use.');
+CustomerSchema
+  .path('mdn')
+  .validate(function(value, respond) {
+    var self = this;
+    this.constructor.findOne({mdn: value}, function(err, customer) {
+      if(err) throw err;
+      if(customer) {
+        if(self.id === customer.id) return respond(true);
+        return respond(false);
+      }
+      respond(true);
+    });
+}, 'MDN is already in use.');
 
 CustomerSchema
   .path('username')

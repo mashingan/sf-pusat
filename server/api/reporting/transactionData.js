@@ -10,81 +10,78 @@ var TaggingCode = require('../tagging_transaction/' +
 var reportUtil = require('./reporting.util');
 var reportData = require('./reporting.data');
 
-function TransactionData (tag) {
-  var emitter = new EventEmitter();
-  var self = this;
+function createTransactionData (tag) {
 
-  self.date = tag.date;
+  var result = {
+    date: tag.date,
 
   // Staff info, fetched from User
-  self.nik = tag.agent;
-  self.name = '';
-  self.gallery = tag.gallery;
-  self.region = '';
+    nik: tag.agent,
+    name: '',
+    gallery: tag.gallery,
+    region: '',
 
   // Ticket info, fetched from TicketTransaction
-  self.mdn = '';
-  self.service = '';
-  self.ticketNumber = '';
-  self.printedAt = '';
-  self.calledAt = reportUtil.getTimeString(tag.time);     // str date
-  self.closedAt = '';
-  self.waitingTime = '';
-  self.handlingTime = tag.duration;
-  self.totalTime = '';
+    mdn: '',
+    service: '',
+    ticketNumber: '',
+    printedAt: '',
+    calledAt: reportUtil.getTimeString(tag.time),     // str date
+    closedAt: '',
+    waitingTime: '',
+    handlingTime: tag.duration,
+    totalTime: '',
 
   // Tagging info, fetched from TaggingCode
-  self.taggingCode = tag.tagging_code;
-  self.tagLevel1 = '';
-  self.tagLevel2 = '';
-  self.tagLevel3 = '';
-  self.tagLevel4 = '';
+    taggingCode: tag.tagging_code,
+    tagLevel1: '',
+    tagLevel2: '',
+    tagLevel3: '',
+    tagLevel4: ''
+  }
 
-  emitter.once('last-query', function () {
-    Gallery.find({ name: self.gallery }, function (err, gal) {
-      self.region = gal.region;
-    });
-    User.findOne({ gallery: self.gallery, nik: self.nik },
+  Gallery.find({ name: tag.gallery }, function (err, gal) {
+    result.region = gal.region;
+  });
+
+  User.findOne({ gallery: tag.gallery, nik: tag.agent },
       function (err, user) {
-        self.name = user.name;
+        result.name = user.name;
       });
-    TaggingCode.findOne({ tagging_code: tag.tagging_code },
-      function (err, tag) {
-        for (var i = 1; i <= 4; i++)
-          self['tagLevel' + i] = tag['level_' + i];
-      });
-  });
 
-  var ticketOptions = {}
-  ticketOptions.date = reportUtil.getDate(tag.date.toLocaleDateString());
-  ticketOptions.customer = tag.customer;
-  ticketOptions.gallery = tag.gallery;
-  ticketOptions.proceedBy.nik = tag.agent;
+  TaggingCode.findOne({ tagging_code: tag.tagging_code },
+      function (err, tagged) {
+        for (var i = 1; i <= 4; i++) {
+          result['tagLevel' + i] = tagged['level_' + i];
+        }
+      });
+
+  var ticketOptions = {
+    date: reportUtil.getDate(tag.date.toLocaleDateString()),
+    customer: tag.customer,
+    gallery: tag.gallery,
+    proceedBy: { nik: tag.agent }
+  };
+
   TicketTransaction.find(ticketOptions, function (err, ticket) {
-    self.mdn = ticket.mdn;
-    self.service = ticket.type_of_service;
-    self.ticketNumber = ticket.ticket_number;
-    self.printedAt = reportUtil.getTimeString(ticket.printedAt);
-    self.waitingTime = reportUtil.opDurations([
-        self.calledAt, self.printedAt], function (a,b){ return a-b; }, 0);
-    self.totalTime = reportUtil.opDurations([
-        self.waitingTime, self.handlingTime],
-        function (a,b) { return a+b; }, 0);
-    self.closedAt = reportUtil.opDurations([
-        self.printedAt, self.totalTime], function (a,b){ return a+b; }, 0);
-    emitter.emit('last-query');
+    result.mdn = ticket.mdn;
+    result.service = ticket.type_of_service;
+    result.ticketNumber = ticket.ticket_number;
+    result.printedAt = reportUtil.getTimeString(ticket.printedAt);
+    result.waitingTime = reportUtil.opDurations([result.printedAt],
+      function (a,b){ return a-b; }, result.calledAt);
+    result.totalTime = reportUtil.opDurations([result.waitingTime],
+      function (a,b){ return a+b; }, result.handlingTime);
+    result.closedAt = reportUtil.opDurations([result.totalTime],
+      function (a,b){ return a+b; }, result.printedAt);
   });
-
+  return result;
 }
 
 function transactionsInfo(res, when, where, who, mindata, maxdata) {
   var emitter = new EventEmitter();
   var toReturn = reportData.transactionData;
   toReturn.data = [];
-  var [placeInfo, placeName] =
-    (where && typeof where.split === 'function' &&
-     ( where.includes('gallery') || where.includes('region'))) ?
-    where.split(':') : [];
   var galleries = [];
   var elemCounter = 0;
 
@@ -127,7 +124,7 @@ function transactionsInfo(res, when, where, who, mindata, maxdata) {
       if (reportUtil.testCounter({ min: mindata, max: maxdata, who: who,
         user: user, tag: tag, counter: elemCounter }))
       {
-        toReturn.data.push(new TransactionData(tag));
+        toReturn.data.push(createTransactionData(tag));
       }
       elemCounter++;
       if (elemCounter >= maxdata) emitter.emit('done');
@@ -135,11 +132,12 @@ function transactionsInfo(res, when, where, who, mindata, maxdata) {
   }
 
   // Getting all galleries if defined region
-  reportUtil.getGalleries(when).then(function (success) {
+  reportUtil.getGalleries(where).then(function (success) {
     galleries = success;
     emitter.emit('populate-data');
   }, function (failed) {
     galleries = failed;
+    emitter.emit('populate-data');
   });
 }
 

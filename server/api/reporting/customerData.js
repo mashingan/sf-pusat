@@ -8,37 +8,37 @@ var TaggingTransaction = require('../customer_tagging_transaction/' +
 var reportData = require('./reporting.data');
 var reportUtil = require('./reporting.util');
 
-function CustomerData (date, tickets) {
-  var self = this;
+function createCustomerData (date, tickets) {
 
-  self.date = date.$gte;
-  self.region = '';   // got from Gallery
-  self.gallery = tickets[0].gallery;
-  self.visitor = 0;
-  self.served = 0;
-  self.skipped = 0;
-  self.withinSL = 0;
-  self.services = []; 
-  self.totalCSR = 0;
+  var result = {
+    date: date.$gte,
+    region: '',   // got from Gallery
+    gallery: tickets[0].gallery,
+    visitor: 0,
+    served: 0,
+    skipped: 0,
+    withinSL: 0,
+    services: [], 
+    totalCSR: 0
+  }
 
   Gallery.findOne({ gallery: tickets[0].gallery },
       function (err, gallery) {
-        self.region = gallery.region;
+        result.region = gallery.region;
       });
 
-  self.served = tickets.reduce(function (a, b) {
-    if (b.status === 'done') return a+1;
-    else return a;
-  }, 0);
+  function filterWith(label) {
+    return function (a, b) {
+      if (b.status === label) return a+1;
+      else return a;
+    };
+  }
 
-  self.skipped = tickets.reduce(function (a, b) {
-    if (b.status === 'skipped') return a+1;
-    else return a;
-  }, 0);
+  result.served = tickets.reduce(filterWith('done'), 0);
+  result.skipped = tickets.reduce(filterWith('skipped'), 0);
+  result.visitor = result.served + result.skipped;
 
-  self.visitor = self.served + self.skipped;
-
-  self.services = tickets.reduce(function (a, b) {
+  result.services = tickets.reduce(function (a, b) {
     var idx = a.findIndex(function (ticket) {
       return a.service === b.type_of_service;
     });
@@ -50,12 +50,12 @@ function CustomerData (date, tickets) {
     return a;
   }, []);
 
-  self.totalCSR = self.services.reduce(function (a, b) {
+  result.totalCSR = result.services.reduce(function (a, b) {
     return a + b.count;
   }, 0);
 
   var ticketNumbers = tickets.reduce(function (a, b) {
-    if (a.includes(b.ticket_number))
+    if (!(a.includes(b.ticket_number)))
       a.push(b.ticket_number);
     return a;
   }, []);
@@ -64,12 +64,13 @@ function CustomerData (date, tickets) {
     date: date, exceeding_sla: false }, function (err, transactions) {
       transactions = Array.isArray(transactions) ?
         transactions: [transactions];
-      self.withinSL = transactions.reduce(function (a, b) {
+      result.withinSL = transactions.reduce(function (a, b) {
         if (a.includes(b.queuing_number)) a.push(b.queuing_number);
         return a;
-      }, []).length / self.visitor * 100;
+      }, []).length / result.visitor * 100;
     });
 
+  return result;
 
 }
 
@@ -119,7 +120,7 @@ function customersInfo (res, when, where, mindata, maxdata) {
       tickets = Array.isArray(tickets) ? tickets : [tickets];
       if (reportUtil.testCounter({ counter:elemCounter,
         min:mindata, max:maxdata}))
-        result.data.push(new CustomerData(date, tickets));
+        result.data.push(createCustomerData(date, tickets));
       elemCounter++;
       if (elemCounter >= maxdata) emitter.emit('done');
     };
@@ -127,7 +128,7 @@ function customersInfo (res, when, where, mindata, maxdata) {
 
 
   TypeOfService.distinct('name', function (err, tos) {
-    result.services = Array.isArray(tos)? tos : tos;
+    result.services = Array.isArray(tos)? tos : [tos];
   });
 
   reportUtil.getGalleries(where).then(function (result) {

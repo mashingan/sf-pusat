@@ -15,8 +15,8 @@ var UserSchema = new Schema({
     default: 'user',
 
   },
-  sync: { type: Boolean, default: false },
   role_item: Array,
+  type_of_service:String,
   online_status : Boolean,
   last_ip_login : String,
   last_user_agent_login : String,
@@ -25,7 +25,11 @@ var UserSchema = new Schema({
   hashedPassword: String,
   provider: String,
   salt: String,
-  menu_privilege: Array
+  menu_privilege: Array,
+  sync:{type:Boolean,default:false},
+  createdAt:{type:Date, default:Date.now},
+  isServing:{type:Boolean,default:false},
+  isBreaktime:{ type:Boolean, default: false }
 },{
     timestamps: true
 });

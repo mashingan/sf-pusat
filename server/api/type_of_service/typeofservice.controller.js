@@ -28,7 +28,7 @@ exports.index = function(req, res) {
   ];
   var data = [];
 
-  if(req.params.filter!='-'){
+  if(req.params.filter!=='-'){
     Typeofservice.find({},function (err, typeofservices) {
       if(err) { return handleError(res, err); }
 
@@ -79,7 +79,7 @@ exports.list = function(req, res) {
     c = count;
   });
 
-  if(req.params.filter!='-'){
+  if(req.params.filter!=='-'){
 
     Typeofservice.find({},function (err, typeofservices) {
       if(err) return res.status(500).send(err);
@@ -163,7 +163,7 @@ exports.create = function(req, res) {
       
         User.findOne({nik : ua[i].user},function(err, user){
 
-          if(user.picture!=""){
+          if(user.picture!==""){
 
             avatar = user.picture;
             
@@ -173,7 +173,7 @@ exports.create = function(req, res) {
                   avatar = 'default_avatar.jpg';
                 }
 
-                if(type=="dashboard"){
+                if(type==="dashboard"){
                   ua_dashboard.push({ 
 
                     modul: ua[i].modul,
@@ -202,7 +202,7 @@ exports.create = function(req, res) {
 
           }else{
 
-            if(type=="dashboard"){
+            if(type==="dashboard"){
               ua_dashboard.push({ 
 
                 modul: ua[i].modul,
@@ -253,16 +253,29 @@ exports.update = function(req, res) {
       typeofservice.description = description;
 
       typeofservice.save(function(err) {
-        if (err) return validationError(res, err);
+        //if (err) return validationError(res, err);
 
 
         Gallery.update({'type_of_service.name': oldName },
           { $set: { 'type_of_service.$.name' : name }},
           { multi: true }, function (errgall, gall) {
-            if (errgall) console.log('Cannot update galleries');
+            if (errgall) {
+              console.log('Cannot update galleries');
+              console.log('%s error: %s', __filename, errgall.message);
+            }
             else {
-              console.log('Update completed!');
-              console.log('Galleries:', gall);
+              console.log('updating in gallery collection succeed!');
+            }
+        });
+
+        User.update({ type_of_service: oldName },
+          { $set: { type_of_service: name }},
+          { multi: true }, function (erruser, users) {
+            if (erruser) {
+              console.log('%s error: %s', __filename, erruser.message);
+            }
+            else {
+              console.log('updating in user collections succeed!');
             }
         });
           
@@ -311,7 +324,7 @@ exports.update = function(req, res) {
       
         User.findOne({nik : ua[i].user},function(err, user){
 
-          if(user.picture!=""){
+          if(user.picture!==""){
 
             avatar = user.picture;
             
@@ -321,7 +334,7 @@ exports.update = function(req, res) {
                   avatar = 'default_avatar.jpg';
                 }
 
-                if(type=="dashboard"){
+                if(type==="dashboard"){
                   ua_dashboard.push({ 
 
                     modul: ua[i].modul,
@@ -350,7 +363,7 @@ exports.update = function(req, res) {
 
           }else{
 
-            if(type=="dashboard"){
+            if(type==="dashboard"){
               ua_dashboard.push({ 
 
                 modul: ua[i].modul,
@@ -438,7 +451,7 @@ exports.destroy = function(req, res) {
       
         User.findOne({nik : ua[i].user},function(err, user){
 
-          if(user.picture!=""){
+          if(user.picture!==""){
 
             avatar = user.picture;
             
@@ -448,7 +461,7 @@ exports.destroy = function(req, res) {
                   avatar = 'default_avatar.jpg';
                 }
 
-                if(type=="dashboard"){
+                if(type==="dashboard"){
                   ua_dashboard.push({ 
 
                     modul: ua[i].modul,
@@ -477,7 +490,7 @@ exports.destroy = function(req, res) {
 
           }else{
 
-            if(type=="dashboard"){
+            if(type==="dashboard"){
               ua_dashboard.push({ 
 
                 modul: ua[i].modul,
@@ -564,7 +577,7 @@ exports.destroy_all = function(req, res) {
       
         User.findOne({nik : ua[i].user},function(err, user){
 
-          if(user.picture!=""){
+          if(user.picture!==""){
 
             avatar = user.picture;
             
@@ -574,7 +587,7 @@ exports.destroy_all = function(req, res) {
                   avatar = 'default_avatar.jpg';
                 }
 
-                if(type=="dashboard"){
+                if(type==="dashboard"){
                   ua_dashboard.push({ 
 
                     modul: ua[i].modul,
@@ -603,7 +616,7 @@ exports.destroy_all = function(req, res) {
 
           }else{
 
-            if(type=="dashboard"){
+            if(type==="dashboard"){
               ua_dashboard.push({ 
 
                 modul: ua[i].modul,

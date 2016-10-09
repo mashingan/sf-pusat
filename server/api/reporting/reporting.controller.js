@@ -4,8 +4,9 @@ var User = require('../user/user.model');
 var TypeOfBreaktime = require('../type_of_breaktime/typeofbreaktime.model');
 var TaggingTransaction = require('../customer_tagging_transaction/' +
     'customer_tagging_transaction.model');
+var Productivity = require('../productivity/productivity.model');
 
-var PerformanceData = require('./performanceData');
+var createPerformanceData = require('./performanceData');
 var transactionsInfo = require('./transactionData.js');
 var customersInfo = require('./customerData.js');
 var reportUtil = require('./reporting.util');
@@ -34,10 +35,6 @@ module.exports.performance = function (req, res) {
     res.status(200).json(result);
   });
 
-  function getTimeMapped (el) {
-    return new Date(el).getTime();
-  }
-
   emitter.once('populate-data', function () {
     gallery = gallery === '-' ? '' : gallery;
     for (var i = 0, elemCount = 0;
@@ -45,20 +42,19 @@ module.exports.performance = function (req, res) {
         i++) {
       var when = req.params.when;
       var user = nameNik[i];
-      var dt;
       if (when && typeof when.split === 'function' &&
-          (dt = when.split(':')).length === 2) {
-        var [from, to] = dt.map(getTimeMapped);
+          when.split(':').length === 2) {
+        var [from, to] = reportUtil.getFromTo(when);
         while (to >= from) {
           if (elemCount >= mindata && elemCount < maxdata)
-            result.data.push(new PerformanceData(user.name, user.nik,
+            result.data.push(createPerformanceData(user.name, user.nik,
                   reportUtil.getDate(to)), gallery);
           to -= reportUtil.ONEDAY;
           elemCount++;
         }
       } else {
         if (elemCount >= mindata && elemCount < maxdata)
-          result.data.push(new PerformanceData(user.name, user.nik,
+          result.data.push(createPerformanceData(user.name, user.nik,
                 date, gallery));
         elemCount++;
       }
@@ -139,12 +135,38 @@ module.exports.customer = function (req, res) {
 };
 
 module.exports.productivity = function (req, res) {
-  toBeImplemented(res);
-};
+  var limit = req.params.limit;
+  var page = req.params.page;
+  var where = req.params.where;
+  var when = req.params.when;
+  var date = reportUtil.getDate(when);
 
-function toBeImplemented (res) {
-  res.status(404).json({
-    result: 'failed',
-    message: 'To be implemented'
-  });
-}
+  var [mindata, maxdata] = reportUtil.getMinimax(limit, page, 30);
+  var [placeInfo, placeName] = reportUtil.splitPlace(where);
+
+  var result = reportData.productivityData;
+  var productivity = Productivity.find({ date: date});
+
+  if (placeInfo && placeName) {
+    var filter = {};
+    filter[placeInfo] = placeName;
+    productivity = productivity.or(filter);
+  }
+
+  productivity
+    .sort('-date')
+    .skip(mindata)
+    .limit(limit)
+    .exec(function (err, productivities) {
+      if (err) {
+        console.log('%s: Error fetching productivity: %s',
+          __filename, err.message);
+        return res.status(404).json({
+          result: 'failed',
+          message: err.message
+        });
+      }
+      result.data = productivities;
+      res.status(200).json({result});
+    });
+};

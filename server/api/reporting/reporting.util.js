@@ -120,8 +120,9 @@ function opDurations(durations, operations, initial) {
       .reduce(operations, initial));
 }
 
-function getMiniMax (limit, page) {
-  limit = limit < 1 || limit === '-' ? 20 : limit;
+function getMinimax (limit, page, initialView) {
+  initialView = initialView || 20;
+  limit = limit < 1 || limit === '-' ? initialView : limit;
   page = page < 1 || page === '-' ? 1 : page;
   
   var mindata = (page - 1) * limit;
@@ -145,12 +146,17 @@ function getFromTo (when) {
   return date.map(function (e) { return e.getTime(); });
 }
 
+function splitPlace (where) {
+  return (where && typeof where.split === 'function' &&
+      (where.includes('gallery') || where.includes('region'))) ?
+    where.split(':') : [];
+}
+
 function getGalleries (where) {
   return new Promise (function (resolve, reject) {
-    var [placeInfo, placeName] = 
-    (where && typeof where.split === 'function' &&
-     ( where.includes('gallery') || where.includes('region'))) ?
-    where.split(':') : [];
+    var [placeInfo, placeName] = splitPlace(where);
+    placeName = placeName && typeof placeName === 'string' ?
+      placeName.replace('_', ' ') : placeName;
     var galleries = [];
     
     if (placeInfo === 'region') {
@@ -195,9 +201,10 @@ module.exports = {
   getDate: getDate,
   getToday: getToday,
   getTomorrow: getTomorrow,
-  getMiniMax: getMiniMax,
+  getMinimax: getMinimax,
   testCounter: testCounter,
   getFromTo: getFromTo,
+  splitPlace: splitPlace,
   getGalleries: getGalleries,
   galleryFilteredQuery: galleryFilteredQuery,
   ONEDAY: ONEDAY
