@@ -9,70 +9,94 @@ var reportData = require('./reporting.data');
 var reportUtil = require('./reporting.util');
 
 function createCustomerData (date, tickets) {
+  return new Promise(function (resolve, reject) {
+    var emitter = new EventEmitter();
 
-  var result = {
-    date: date.$gte,
-    region: '',   // got from Gallery
-    gallery: tickets[0].gallery,
-    visitor: 0,
-    served: 0,
-    skipped: 0,
-    withinSL: 0,
-    services: [], 
-    totalCSR: 0
-  }
-
-  Gallery.findOne({ gallery: tickets[0].gallery },
-      function (err, gallery) {
-        result.region = gallery.region;
-      });
-
-  function filterWith(label) {
-    return function (a, b) {
-      if (b.status === label) return a+1;
-      else return a;
-    };
-  }
-
-  result.served = tickets.reduce(filterWith('done'), 0);
-  result.skipped = tickets.reduce(filterWith('skipped'), 0);
-  result.visitor = result.served + result.skipped;
-
-  result.services = tickets.reduce(function (a, b) {
-    var idx = a.findIndex(function (ticket) {
-      return a.service === b.type_of_service;
-    });
-    if (idx === -1) {
-      a.push({ service: b.type_of_service, count: 0 });
-    } else {
-      a[idx][b.count]++;
+    var result = {
+      date: date.$gte,
+      region: '',   // got from Gallery
+      gallery: tickets[0].gallery,
+      visitor: 0,
+      served: 0,
+      skipped: 0,
+      withinSL: 0,
+      services: [], 
+      totalCSR: 0
     }
-    return a;
-  }, []);
 
-  result.totalCSR = result.services.reduce(function (a, b) {
-    return a + b.count;
-  }, 0);
+    var taggingDone = false;
+    var galleryDone = false;
+    var etcDone = false;
 
-  var ticketNumbers = tickets.reduce(function (a, b) {
-    if (!(a.includes(b.ticket_number)))
-      a.push(b.ticket_number);
-    return a;
-  }, []);
-
-  TaggingTransaction.find({ queuing_number: { $in: ticketNumbers },
-    date: date, exceeding_sla: false }, function (err, transactions) {
-      transactions = Array.isArray(transactions) ?
-        transactions: [transactions];
-      result.withinSL = transactions.reduce(function (a, b) {
-        if (a.includes(b.queuing_number)) a.push(b.queuing_number);
-        return a;
-      }, []).length / result.visitor * 100;
+    emitter.on('all-done', function () {
+      if (taggingDone && galleryDone && etcDone)
+        resolve(result);
     });
 
-  return result;
+    emitter.on('gallery-done', function () {
+      galleryDone = true;
+      emitter.emit('all-done');
+    });
 
+    Gallery.findOne({ gallery: tickets[0].gallery },
+        function (err, gallery) {
+          result.region = gallery.region;
+          emitter.emit('gallery-done');
+        });
+
+    function filterWith(label) {
+      return function (a, b) {
+        if (b.status === label) return a+1;
+        else return a;
+      };
+    }
+
+    result.served = tickets.reduce(filterWith('done'), 0);
+    result.skipped = tickets.reduce(filterWith('skipped'), 0);
+    result.visitor = result.served + result.skipped;
+
+    result.services = tickets.reduce(function (a, b) {
+      var idx = a.findIndex(function (ticket) {
+        return ticket.service === b.type_of_service;
+      });
+      if (idx === -1) {
+        a.push({ service: b.type_of_service, count: 0 });
+      } else {
+        a[idx].count++;
+      }
+      return a;
+    }, []);
+
+    result.totalCSR = result.services.reduce(function (a, b) {
+      return a + b.count;
+    }, 0);
+
+    var ticketNumbers = tickets.reduce(function (a, b) {
+      if (!(a.includes(b.ticket_number)))
+        a.push(b.ticket_number);
+      return a;
+    }, []);
+
+    etcDone = true;
+
+    emitter.on('tagging-done', function () {
+      taggingDone = true;
+      emitter.emit('all-done');
+    });
+
+    TaggingTransaction.find({ queuing_number: { $in: ticketNumbers },
+      date: date, exceeding_sla: false }, function (err, transactions) {
+        transactions = Array.isArray(transactions) ?
+          transactions: [transactions];
+        result.withinSL = transactions.reduce(function (a, b) {
+          if (a.includes(b.queuing_number)) a.push(b.queuing_number);
+          return a;
+        }, []).length / result.visitor * 100;
+        emitter.emit('tagging-done');
+      });
+  });
 }
+
 
 function customersInfo (res, when, where, mindata, maxdata) {
   var emitter = new EventEmitter();
@@ -120,7 +144,9 @@ function customersInfo (res, when, where, mindata, maxdata) {
       tickets = Array.isArray(tickets) ? tickets : [tickets];
       if (reportUtil.testCounter({ counter:elemCounter,
         min:mindata, max:maxdata}))
-        result.data.push(createCustomerData(date, tickets));
+        //result.data.push(createCustomerData(date, tickets));
+        createCustomerData(date, tickets).then(function (success) {
+          result.data.push(success); }, function (failed) {} );
       elemCounter++;
       if (elemCounter >= maxdata) emitter.emit('done');
     };

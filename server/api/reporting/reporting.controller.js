@@ -47,15 +47,24 @@ module.exports.performance = function (req, res) {
         var [from, to] = reportUtil.getFromTo(when);
         while (to >= from) {
           if (elemCount >= mindata && elemCount < maxdata)
+            /*
             result.data.push(createPerformanceData(user.name, user.nik,
                   reportUtil.getDate(to)), gallery);
+          */
+            createPerformanceData(user.name, user.nik,
+                reportUtil.getDate(to), gallery).then(
+                gettingPromiseFromPerformance(), unfulfilledPromise());
           to -= reportUtil.ONEDAY;
           elemCount++;
         }
       } else {
         if (elemCount >= mindata && elemCount < maxdata)
+          /*
           result.data.push(createPerformanceData(user.name, user.nik,
                 date, gallery));
+          */
+          createPerformanceData(user.name, user.nik, date, gallery)
+            .then(gettingPromiseFromPerformance(), unfulfilledPromise());
         elemCount++;
       }
 
@@ -66,6 +75,16 @@ module.exports.performance = function (req, res) {
         emitter.emit('done');
     }
   });
+
+  function gettingPromiseFromPerformance () {
+    return function (success) {
+      result.data.push(success);
+    };
+  }
+
+  function unfulfilledPromise() {
+    return function (reject) {};
+  }
 
   if (gallery !== '-') {
     User.find({ gallery: gallery }, function (errusers, users) {
