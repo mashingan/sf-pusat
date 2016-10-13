@@ -13,7 +13,7 @@ function createCustomerData (date, tickets) {
     var emitter = new EventEmitter();
 
     var result = {
-      date: date.$gte,
+      date: date? date.$gte : tickets[0].date,
       region: '',   // got from Gallery
       gallery: tickets[0].gallery,
       visitor: 0,
@@ -40,7 +40,7 @@ function createCustomerData (date, tickets) {
 
     Gallery.findOne({ gallery: tickets[0].gallery },
         function (err, gallery) {
-          result.region = gallery.region;
+          if (gallery) result.region = gallery.region;
           emitter.emit('gallery-done');
         });
 
@@ -98,7 +98,7 @@ function createCustomerData (date, tickets) {
 }
 
 
-function customersInfo (res, when, where, mindata, maxdata) {
+function customersInfo (when, where, mindata, maxdata) {
   var emitter = new EventEmitter();
   var result = reportData.customerData;
   result.data = [];
@@ -106,63 +106,97 @@ function customersInfo (res, when, where, mindata, maxdata) {
   var galleries = [];
   var elemCounter = 0;
 
-  emitter.once('done', function () {
-    res.status(200).json(result);
-  });
+  return new Promise (function (resolve, reject) {
 
-  emitter.once('populate-data', function () {
-    var [from, to] = reportUtil.getFromTo(when);
+    emitter.once('done', function () {
+      //res.status(200).json(result);
+      resolve(result);
+    });
 
-    var dt;
-    var i = 0;
-    var gallery;
-    if (to) {
-      while (to >= from && elemCounter < maxdata) {
-        dt = reportUtil.getDate(to);
-        for (i = 0; i < galleries.length; i++) {
-          gallery = galleries[i];
-          TicketTransaction.find({ gallery: gallery, date: dt},
-              ticketConsumer(dt));
+    emitter.once('populate-data', function () {
+      var [from, to] = reportUtil.getFromTo(when);
+      console.log('when:', when);
+      console.log('from-to: %s-%s', from, to);
+
+      var dt;
+      var i = 0;
+      var gallery;
+      if (to) {
+        while (to >= from && elemCounter < maxdata) {
+          dt = reportUtil.getDate(to);
+          for (i = 0; i < galleries.length; i++) {
+            gallery = galleries[i];
+            TicketTransaction.find({ gallery: gallery, date: dt},
+                ticketConsumer(dt));
+          }
+
+          to -= reportUtil.ONEDAY;
         }
+      } else {
+        var options = {};
+        if (when !== 'all' && from)
+          options.date = reportUtil.getDate(from);
+        for (i = 0; i < galleries.length; i++) {
+          options.gallery = galleries[i];
+          console.log(options);
+          if (options.date) {
+            TicketTransaction.find(options, ticketConsumer(options.date));
+          } else {
+            TicketTransaction.aggregate([
+                { $match: options },
+                { $group: { _id: {date: '$date', region: '$region',
+                                   status: '$status',
+                                   ticket_number: '$ticket_number',
+                                   type_of_service: '$type_of_service'}}}],
+                aggregateProcessor());
+          }
+        }
+      }
 
-        to -= reportUtil.ONEDAY;
-      }
-    } else {
-      dt = reportUtil.getDate(from);
-      for (i = 0; i < galleries.length; i++) {
-        gallery = galleries[i];
-        TicketTransaction.find({ gallery: gallery, date: dt },
-            ticketConsumer(dt));
-      }
+      setTimeout(function () { emitter.emit('done'); }, 5000);
+
+    });
+  
+    function ticketConsumer(date) {
+      return function (err, tickets) {
+        tickets = Array.isArray(tickets) ? tickets : [tickets];
+        if (reportUtil.testCounter({ counter:elemCounter,
+          min:mindata, max:maxdata})) {
+          //result.data.push(createCustomerData(date, tickets));
+          createCustomerData(date, tickets).then(function (success) {
+            console.log(success);
+            result.data.push(success); }, function (failed) {} );
+        }
+        elemCounter++;
+        if (elemCounter >= maxdata) emitter.emit('done');
+      };
     }
 
-    emitter.emit('done');
-  });
-  
-  function ticketConsumer(date) {
-    return function (err, tickets) {
-      tickets = Array.isArray(tickets) ? tickets : [tickets];
-      if (reportUtil.testCounter({ counter:elemCounter,
-        min:mindata, max:maxdata}))
-        //result.data.push(createCustomerData(date, tickets));
-        createCustomerData(date, tickets).then(function (success) {
-          result.data.push(success); }, function (failed) {} );
-      elemCounter++;
-      if (elemCounter >= maxdata) emitter.emit('done');
-    };
-  }
+    function aggregateProcessor () {
+      return function (err, aggr) {
+        aggr.forEach(function (tickets) {
+          if (reportUtil.testCounter({ counter: elemCounter,
+            min:mindata, max:maxdata})) {
+            createCustomerData(undefined, tickets).then(function (success) {
+              result.data.push(success); }, function (failed) {});
+            if (++elemCounter >= maxdata) emitter.emit('done');
+          }
+        });
+      };
+    }
 
 
-  TypeOfService.distinct('name', function (err, tos) {
-    result.services = Array.isArray(tos)? tos : [tos];
-  });
+    TypeOfService.distinct('name', function (err, tos) {
+      result.services = Array.isArray(tos)? tos : [tos];
+    });
 
-  reportUtil.getGalleries(where).then(function (result) {
-    galleries = result;
-    emitter.emit('populate-data');
-  }, function (failed) {
-    galleries = failed;
-    emitter.emit('populate-data');
+    reportUtil.getGalleries(where).then(function (result) {
+      galleries = result;
+      emitter.emit('populate-data');
+    }, function (failed) {
+      galleries = failed;
+      emitter.emit('populate-data');
+    });
   });
 }
 

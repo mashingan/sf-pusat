@@ -14,8 +14,8 @@ var reportData = require('./reporting.data');
 
 module.exports.performance = function (req, res) {
   var emitter = new EventEmitter();
-  var limit = req.params.limit;
-  var page = req.params.page;
+  var limit = parseInt(req.params.limit);
+  var page = parseInt(req.params.page);
   var gallery = req.params.where;
   var date = reportUtil.getDate(req.params.when);
   
@@ -132,8 +132,8 @@ module.exports.performance = function (req, res) {
 }
 
 module.exports.transaction = function (req, res) {
-  var limit = req.params.limit;
-  var page = req.params.page;
+  var limit = parseInt(req.params.limit);
+  var page = parseInt(req.params.page);
   var where = req.params.where;
   var who = req.params.who;
   var when = req.params.when;
@@ -144,18 +144,19 @@ module.exports.transaction = function (req, res) {
 };
 
 module.exports.customer = function (req, res) {
-  var limit = req.params.limit;
-  var page = req.params.page;
+  var limit = parseInt(req.params.limit);
+  var page = parseInt(req.params.page);
   var where = req.params.where;
   var when = req.params.when;
 
   var [mindata, maxdata] = reportUtil.getMinimax(limit, page);
-  customersInfo(res, when, where, mindata, maxdata);
+  customersInfo(when, where, mindata, maxdata).then(function (success) {
+    res.status(200).json(success); }, function (failed) {});
 };
 
 module.exports.productivity = function (req, res) {
-  var limit = req.params.limit;
-  var page = req.params.page;
+  var limit = parseInt(req.params.limit);
+  var page = parseInt(req.params.page);
   var where = req.params.where;
   var when = req.params.when;
   var date = reportUtil.getDate(when);

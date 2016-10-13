@@ -16,5 +16,6 @@ router.put('/:id', controller.update);
 router.patch('/:id', controller.update);
 router.delete('/:id/:user', controller.destroy);
 router.post('/deleteall/:user', controller.destroy_all);
+router.post('/upload', controller.uploadExcel);
 
 module.exports = router;

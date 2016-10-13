@@ -140,6 +140,7 @@ function testCounter (obj) {
 }
 
 function getFromTo (when) {
+  if (when === 'all') return undefined;
   var date = (when && typeof when.split && when !== '-') ?
     when.split(':').map(function (dt) { return new Date(dt); }) :
     [getToday(), getTomorrow()];

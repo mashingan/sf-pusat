@@ -7,6 +7,10 @@ var TaggingTransaction = require('./tagging_transaction.model');
 var moment = require('moment');
 var User = require('../user/user.model');
 var UserActivity = require('../user_activity/user_activity.model');
+
+var formidable = require('formidable');
+var Excel = require('exceljs');
+
 var Socket = null;
 
 
@@ -688,6 +692,87 @@ exports.destroy_all = function(req, res) {
   return res.status(204).send('No Content');
 
 };
+
+exports.uploadExcel = function (req, res) {
+  var form = new formidable.IncomingForm();
+  form.multiple = true;
+  form.uploadDir = path.join(__dirname,
+    '../../../client', 'media', 'temp');
+
+  form.on('field', function (name, value) {});
+
+  form.on('file', function (field, file) {
+    console.log('Saving file:', file.name);
+    var newname = path.join(form.uploadDir, 'temp.xlsx');
+    fs.rename(file.path, newname, function (err) {
+      if (err) console.log('Cannot rename/upload update');
+      else {
+        console.log('Update saved as', newname);
+        var workbook = new Excel.Workbook();
+        var entry = [];
+        workbook.xlsx.readFile(newname)
+          .then(function () {
+            workbook.eachSheet(function (worksheet, sheetId) {
+              worksheet.eachRow(function (row, rowNumber) {
+                var data = {};
+                if (row && rowNumber > 1) {
+                  row.eachCell(function (cell, colNumber) {
+                    if (colNumber === 2) {
+                      data.tagging_code = cell? (cell.value || '') : '' ;
+                    }
+                    else if (colNumber === 7) {
+                      data.sla = cell? (cell.value || '') : '';
+                    }
+                    else if (colNumber > 2 && colNumber < 7) {
+                      data['level_'+(colNumber-2)] = cell?
+                        (cell.value || '') : '' ;
+                    }
+                  }); // End eachCell
+                  entry.push(data);
+                }
+              }); // End eachRow
+              TaggingTransaction.create({ entry: entry },
+                function (err, doc) {
+                  if (err) {
+                    console.log('Failed to save tagging transaction');
+                    return res.status(404).json({
+                      result: 'failed',
+                      message: 'Cannot save tagging transaction: ' +
+                           err.msg
+                    });
+                  }
+                  res.status(200).json({
+                    result: 'success',
+                    message: 'upload excel dan saving it success'
+                  });
+
+                  // removing temporary excel file
+                  fs.unlink(newname, function (errfs) {
+                    if (errfs) {
+                      console.log('Cannot delete temp.xlsx:', errfs);
+                    }
+                  });
+              });
+
+            });   // End eachSheet
+          });     // End xlsx.readFile
+      }
+    });
+  });
+
+  form.on('error', function (err) {
+    console.log('An error has occurred:\n' + err);
+    res.status(500).json({
+      result: 'failed',
+      message: 'Some error happened ' + err
+    });
+  });
+
+  form.on('end', function () {});
+
+  form.parse(req);
+};
+
 function handleError(res, err) {
   return res.status(500).send(err);
 }
