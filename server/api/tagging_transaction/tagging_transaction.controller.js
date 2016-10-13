@@ -704,6 +704,7 @@ exports.uploadExcel = function (req, res) {
   form.on('file', function (field, file) {
     console.log('Saving file:', file.name);
     var newname = path.join(form.uploadDir, 'temp.xlsx');
+    var promising = [];
     fs.rename(file.path, newname, function (err) {
       if (err) console.log('Cannot rename/upload update');
       else {
@@ -714,47 +715,39 @@ exports.uploadExcel = function (req, res) {
           .then(function () {
             workbook.eachSheet(function (worksheet, sheetId) {
               worksheet.eachRow(function (row, rowNumber) {
-                var data = {};
-                if (row && rowNumber > 1) {
-                  row.eachCell(function (cell, colNumber) {
-                    if (colNumber === 2) {
-                      data.tagging_code = cell? (cell.value || '') : '' ;
-                    }
-                    else if (colNumber === 7) {
-                      data.sla = cell? (cell.value || '') : '';
-                    }
-                    else if (colNumber > 2 && colNumber < 7) {
-                      data['level_'+(colNumber-2)] = cell?
-                        (cell.value || '') : '' ;
-                    }
-                  }); // End eachCell
-                  entry.push(data);
-                }
-              }); // End eachRow
-              TaggingTransaction.create({ entry: entry },
-                function (err, doc) {
-                  if (err) {
-                    console.log('Failed to save tagging transaction');
-                    return res.status(404).json({
-                      result: 'failed',
-                      message: 'Cannot save tagging transaction: ' +
-                           err.msg
-                    });
+                promising.push(new Promise(function (resolve, reject) {
+                  var data = {};
+                  if (row && rowNumber > 1) {
+                    row.eachCell(function (cell, colNumber) {
+                      if (colNumber === 2) {
+                        data.tagging_code = cell? (cell.value || '') : '';
+                      }
+                      else if (colNumber === 7) {
+                          data.sla = cell? (cell.value || '') : '';
+                      }
+                      else if (colNumber > 2 && colNumber < 7) {
+                          data['level_'+(colNumber-2)] = cell? (
+                            cell.value || '') : '';
+                      }
+                    });   // End eachCell
+                    entry.push(data);
                   }
-                  res.status(200).json({
-                    result: 'success',
-                    message: 'upload excel dan saving it success'
-                  });
-
-                  // removing temporary excel file
-                  fs.unlink(newname, function (errfs) {
-                    if (errfs) {
-                      console.log('Cannot delete temp.xlsx:', errfs);
-                    }
-                  });
-              });
-
+                  if (data !== {})
+                    resolve(data);
+                  else
+                    reject('no data available');
+                }));
+                
+              }); // End eachRow
             });   // End eachSheet
+            Promise.all(promising).then(function (values) {
+              sendResponse(values, newname);
+            }, function (reason) {
+              res.status(404).json({
+                result: 'failed',
+                message: reason + ': unknown, just cannot save it'
+              });
+            });   // End of Promise.all
           });     // End xlsx.readFile
       }
     });
@@ -768,9 +761,36 @@ exports.uploadExcel = function (req, res) {
     });
   });
 
-  form.on('end', function () {});
+  form.on('end', function () {
+  });
 
   form.parse(req);
+
+  function sendResponse (entry, newname) {
+    TaggingTransaction.create(entry, function (err, doc) {
+      if (err) {
+        console.log('Failed to save tagging transaction');
+        return res.status(404).json({
+          result: 'failed',
+          message: 'Cannot save tagging transaction: ' + err.msg
+        });
+      }
+      console.log('upload excel dan saving it success');
+      res.status(200).json({
+        result: 'success',
+        message: 'upload excel dan saving it success'
+      });
+
+      // removing temporary excel file
+      fs.unlink(newname, function (errfs) {
+        if (errfs) {
+          console.log('Cannot delete temp.xlsx:', errfs);
+          return;
+        }
+        console.log('Deleting temp.xlsx is success');
+      });
+    });
+  }
 };
 
 function handleError(res, err) {
