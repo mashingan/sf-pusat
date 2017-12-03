@@ -144,11 +144,13 @@ function customersInfo (when, where, mindata, maxdata) {
           } else {
             TicketTransaction.aggregate([
                 { $match: options },
-                { $group: { _id: {date: '$date', region: '$region',
-                                   status: '$status',
-                                   ticket_number: '$ticket_number',
-                                   type_of_service: '$type_of_service'}}}],
-                aggregateProcessor());
+                { $group: { _id: {date: '$date'},
+                            data: { $push: { region: '$region',
+                              status: '$status',
+              ticket_number: '$ticket_number',
+              queuing_number: '$queuing_number',
+              gallery: '$gallery' }}}}],
+              aggregateProcessor());
           }
         }
       }
